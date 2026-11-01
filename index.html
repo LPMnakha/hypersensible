@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rive</title>
+<meta name="description" content="Un petit refuge au bord du lac pour les personnes hypersensibles : respirer, nommer, démêler, s’apaiser.">
+<meta name="theme-color" content="#E9EFF0" id="themeColor">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rive">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EFF0; --bg2:#DFE8EA; --card:#F8FAFA; --ink:#233740; --mut:#5C7380; --line:#D2DEE2;
+  --pri:#2F6B7E; --priInk:#FFFFFF; --glacier:#9CC5CF; --sage:#7E9E86; --dusk:#E7B4A2; --duskInk:#5A2E22;
+  --soft:#E1ECEE; --chip:#EEF4F5;
+  --mfar:#B5C8D1; --mmid:#8BA6B3; --mnear:#6F8E9D; --shore:#6E8F78; --lake1:#7FB0C0; --lake2:#4E8799;
+  --shadow:0 1px 2px rgba(35,55,64,.06), 0 8px 28px rgba(35,55,64,.07);
+  --r-lg:26px; --r-md:18px; --r-sm:12px;
+  --f: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1A20; --bg2:#13222A; --card:#172830; --ink:#E2ECEF; --mut:#93AAB5; --line:#253A44;
+    --pri:#86BFD0; --priInk:#0F1A20; --glacier:#3E6B79; --sage:#7FA28A; --dusk:#D99B86; --duskInk:#2A1510;
+    --soft:#1B2F38; --chip:#1D313A;
+    --mfar:#2E4652; --mmid:#253B46; --mnear:#1E323C; --shore:#1D3328; --lake1:#244A58; --lake2:#173540;
+    --shadow:0 1px 2px rgba(0,0,0,.25), 0 8px 28px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1A20; --bg2:#13222A; --card:#172830; --ink:#E2ECEF; --mut:#93AAB5; --line:#253A44;
+  --pri:#86BFD0; --priInk:#0F1A20; --glacier:#3E6B79; --sage:#7FA28A; --dusk:#D99B86; --duskInk:#2A1510;
+  --soft:#1B2F38; --chip:#1D313A;
+  --mfar:#2E4652; --mmid:#253B46; --mnear:#1E323C; --shore:#1D3328; --lake1:#244A58; --lake2:#173540;
+  --shadow:0 1px 2px rgba(0,0,0,.25), 0 8px 28px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;font-family:var(--f);color:var(--ink);background:var(--bg);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100dvh;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+body.locked{overflow:hidden}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+h1{font-size:30px}
+h2{font-size:21px}
+h3{font-size:17px}
+p{margin:0}
+a{color:var(--pri)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--glacier);outline-offset:2px;border-radius:10px}
+input,textarea{font:inherit;color:var(--ink)}
+.mut{color:var(--mut)}
+.small{font-size:15px}
+.tiny{font-size:13px}
+.stack>*+*{margin-top:12px}
+
+/* Top bar */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.brand{font-weight:800;font-size:20px;letter-spacing:.01em;display:flex;align-items:center;gap:8px;flex:1}
+.brand svg{width:26px;height:26px}
+.sos-pill{display:flex;align-items:center;gap:6px;background:var(--dusk);color:var(--duskInk);font-weight:800;font-size:15px;padding:8px 14px;border-radius:999px}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;color:var(--mut)}
+.icon-btn svg{width:22px;height:22px}
+
+main{max-width:560px;margin:0 auto;padding:0 16px}
+section{margin-top:22px}
+
+/* Hero */
+.hero{margin:6px -16px 0;position:relative}
+.hero svg,.hero-ill svg{display:block;width:100%;height:auto}
+.hero-ill{margin:0 -20px;border-radius:0;overflow:hidden}
+.hero-txt{position:absolute;left:20px;top:16px;right:20px}
+.hero-txt .date{font-size:15px;font-weight:600;color:#2a4452;opacity:.85}
+.hero-txt h1{color:#1e3743}
+.night .hero-txt h1,.night .hero-txt .date{color:#EEF4F6}
+.cairn-note{position:absolute;left:18px;bottom:10px;font-size:13px;font-weight:700;color:#F3F7F7;text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.rip{animation:rip 7s ease-in-out infinite}
+.rip:nth-of-type(2){animation-delay:-2.3s}.rip:nth-of-type(3){animation-delay:-4.6s}
+@keyframes rip{0%,100%{opacity:.15;transform:translateX(0)}50%{opacity:.6;transform:translateX(8px)}}
+
+/* SOS band */
+.sos-band{display:flex;align-items:center;gap:16px;width:100%;text-align:left;margin-top:18px;padding:18px 18px;border-radius:var(--r-lg);background:linear-gradient(120deg,var(--dusk),color-mix(in srgb,var(--dusk) 70%,var(--bg)));color:var(--duskInk)}
+.sos-band strong{display:block;font-size:20px}
+.sos-band span{display:block;font-size:15px;line-height:1.4;opacity:.9;margin-top:2px}
+.sos-band .ring{flex:none;width:52px;height:52px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font-weight:800;font-size:14px;opacity:.85}
+
+/* Generic card */
+.card{background:var(--card);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
+.card>*+*{margin-top:10px}
+.plain{padding:4px 2px}
+.plain>*+*{margin-top:8px}
+.label{font-size:14px;font-weight:700;color:var(--mut)}
+
+.wx-row{display:flex;justify-content:space-between;gap:4px;margin-top:12px}
+.wx{flex:1;aspect-ratio:1;max-width:58px;border-radius:50%;font-size:28px;display:grid;place-items:center;background:var(--chip);transition:transform .2s}
+.wx:active{transform:scale(.92)}
+.wx.on{background:var(--glacier);box-shadow:0 0 0 3px var(--pri) inset}
+
+.quote{font-size:22px;font-weight:700;line-height:1.35;padding:18px 4px 4px;border-top:2px solid var(--line)}
+.quote-src{font-size:14px;color:var(--mut)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;font-weight:800;background:var(--soft);color:var(--ink)}
+.btn.primary{background:var(--pri);color:var(--priInk)}
+.btn.dusk{background:var(--dusk);color:var(--duskInk)}
+.btn.block{width:100%}
+.btn.ghost{background:transparent;border:2px solid var(--line)}
+.btn:disabled{opacity:.45}
+.link{color:var(--pri);font-weight:800;font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+/* Tool list (not identical cards: list rows) */
+.tools{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.tool{display:flex;gap:14px;align-items:center;width:100%;text-align:left;padding:16px 18px}
+.tool+.tool{border-top:1px solid var(--line)}
+.tool .ic{flex:none;width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:var(--soft);font-size:22px}
+.tool b{display:block;font-size:17px}
+.tool span{display:block;font-size:14px;color:var(--mut);line-height:1.35}
+.tool .chev{margin-left:auto;color:var(--mut);flex:none}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 14px;border-radius:999px;background:var(--chip);font-size:15px;font-weight:600;border:2px solid transparent}
+.chip.on{background:var(--glacier);border-color:var(--pri);color:var(--ink)}
+.chip-group+.chip-group{margin-top:14px}
+.seg{display:flex;background:var(--chip);border-radius:999px;padding:4px;gap:2px}
+.seg button{flex:1;padding:8px 6px;border-radius:999px;font-size:14px;font-weight:700;color:var(--mut)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+
+textarea,.input{width:100%;border:2px solid var(--line);background:var(--card);border-radius:var(--r-md);padding:12px 14px;font-size:17px;line-height:1.45;resize:vertical}
+textarea{min-height:96px}
+textarea:focus,.input:focus{outline:none;border-color:var(--pri)}
+.field>label{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.field+.field{margin-top:16px}
+
+input[type=range]{width:100%;accent-color:var(--pri);height:32px}
+.rangeval{font-weight:800;font-size:28px;color:var(--pri)}
+
+/* History strip */
+.strip{display:grid;grid-template-columns:repeat(14,1fr);gap:2px;text-align:center;margin-top:12px}
+.strip div{font-size:18px;line-height:1.2}
+.strip small{display:block;font-size:11px;color:var(--mut);font-weight:700}
+.strip .none{color:var(--line)}
+.entry{padding:14px 0;border-top:1px solid var(--line)}
+.entry:first-child{border-top:0}
+.entry .head{display:flex;gap:10px;align-items:center}
+.entry .em{font-size:26px}
+.energy{letter-spacing:2px;color:var(--pri);font-size:12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tags i{font-style:normal;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--chip);color:var(--mut);font-weight:600}
+.excerpt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Accordions */
+details.acc{background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);margin-top:10px}
+details.acc summary{list-style:none;padding:16px 18px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-size:22px;color:var(--mut);font-weight:600}
+details.acc[open] summary::after{content:"–"}
+details.acc .acc-b{padding:0 18px 18px}
+details.acc .acc-b>*+*{margin-top:10px}
+details.acc ul{padding-left:20px;margin:0}
+details.acc li+li{margin-top:6px}
+.src{font-size:13px;color:var(--mut)}
+
+/* Nav */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:700;color:var(--mut);padding:4px 0;max-width:90px}
+.tabs svg{width:25px;height:25px}
+.tabs button.on{color:var(--pri)}
+
+/* Overlay */
+.ov{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
+.ov.show{display:block;animation:ovIn .35s ease}
+@keyframes ovIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ov-in{max-width:560px;margin:0 auto;padding:calc(8px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom))}
+.ov-head{display:flex;justify-content:space-between;align-items:center;min-height:52px;margin:0 -8px}
+.ov-body>*+*{margin-top:14px}
+.center{text-align:center}
+.center .chips{justify-content:center}
+.steps{display:flex;gap:6px}
+.steps i{height:5px;flex:1;border-radius:3px;background:var(--line)}
+.steps i.on{background:var(--pri)}
+
+/* Breathing orb */
+.orb-wrap{position:relative;width:min(70vw,270px);aspect-ratio:1;margin:26px auto 8px;display:grid;place-items:center}
+.orb-halo{position:absolute;inset:0;border-radius:50%;border:2px dashed var(--line)}
+.orb{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 38% 32%,#ffffffcc 0 8%,transparent 30%),radial-gradient(circle at 50% 60%,var(--lake1),var(--lake2));transform:scale(.62);box-shadow:0 20px 60px -20px var(--lake2)}
+.orb-label{font-size:22px;font-weight:800;min-height:62px;padding:0 10px}
+
+/* Guided text */
+.guide-box{margin:30px 0 24px;min-height:200px;display:flex;flex-direction:column;justify-content:center;gap:24px}
+.guide-text{font-size:24px;font-weight:700;line-height:1.35}
+.guide-text.in{animation:fadeIn .7s ease}
+.guide-text[data-k="tense"]{color:var(--pri)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--pri);border-radius:3px}
+
+/* Grounding */
+.big-n{font-size:96px;font-weight:800;line-height:1;color:var(--pri);margin-top:20px}
+.dots{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:26px 0}
+.dot{width:54px;height:54px;border-radius:50%;border:3px solid var(--glacier);transition:background .3s,transform .2s}
+.dot.on{background:var(--glacier);transform:scale(.92)}
+
+/* Checklist */
+.check{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;padding:14px 4px;border-top:1px solid var(--line)}
+.check:first-child{border-top:0}
+.check .box{flex:none;width:28px;height:28px;border-radius:9px;border:2px solid var(--mut);display:grid;place-items:center;margin-top:1px}
+.check.on .box{background:var(--sage);border-color:var(--sage);color:#fff}
+.check.on .box::after{content:"✓";font-weight:800;font-size:16px}
+
+/* Trap cards */
+.trap{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:var(--r-md);background:var(--chip);border:2px solid transparent}
+.trap+.trap{margin-top:8px}
+.trap b{display:block}
+.trap span{display:block;font-size:14px;color:var(--mut)}
+.trap.on{border-color:var(--pri);background:var(--glacier)}
+.trap.on span{color:var(--ink)}
+
+/* Done */
+.done-stone{width:120px;margin:40px auto 10px;display:block}
+.done-msg{font-size:22px;font-weight:700;line-height:1.4;margin:14px 0 30px}
+
+/* Boats */
+.lake-scene{position:relative;margin:10px -20px 0;height:330px;overflow:hidden}
+.lake-scene svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.boat{position:absolute;left:-80%;max-width:72%;animation:sail 20s linear forwards;pointer-events:none}
+.boat .sail{background:var(--card);color:var(--ink);font-size:14px;font-weight:700;padding:8px 12px;border-radius:14px 14px 14px 4px;box-shadow:var(--shadow);line-height:1.3}
+.boat svg{display:block;width:70px;height:20px;margin-top:2px;animation:bob 3s ease-in-out infinite}
+@keyframes sail{0%{left:-75%;opacity:0}8%{opacity:1}75%{opacity:1}100%{left:110%;opacity:0}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-weight:700;font-size:15px;opacity:0;transition:.35s;z-index:80;max-width:90vw;white-space:nowrap;text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Toggle */
+.switch{width:52px;height:32px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:.25s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch[aria-pressed="true"]{background:var(--sage)}
+.switch[aria-pressed="true"]::after{left:23px}
+.set-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.set-row:first-child{border-top:0}
+.set-row>div{flex:1}
+
+.help{background:var(--soft);border-radius:var(--r-md);padding:14px 16px;font-size:15px}
+.help b{font-weight:800}
+
+/* Illustrations un peu assombries la nuit */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero svg,:root:not([data-theme="light"]) .lake-scene svg.bg,:root:not([data-theme="light"]) .ov .hero-ill svg{filter:brightness(.78) saturate(.9)}}
+:root[data-theme="dark"] .hero svg,:root[data-theme="dark"] .ov .hero-ill svg,:root[data-theme="dark"] .lake-scene svg.bg{filter:brightness(.78) saturate(.9)}
+/* Soft mode */
+body.soft .rip,body.soft .boat svg{animation:none}
+body.soft .hero svg{filter:saturate(.75)}
+body.soft .ov.show{animation:none}
+@media (prefers-reduced-motion: reduce){
+  .rip,.boat svg,.ov.show,.guide-text.in{animation:none!important}
+  .boat{animation:fadeBoat 8s ease forwards!important;left:8%!important}
+}
+@keyframes fadeBoat{0%{opacity:0}15%{opacity:1}70%{opacity:1}100%{opacity:0}}
+body.soft .boat{animation:fadeBoat 8s ease forwards;left:8%}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand" aria-label="Rive">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--glacier)"/><path d="M3 19 L11 9 L15 14 L20 7 L29 19 Z" fill="var(--pri)"/><path d="M3 19h26a13 13 0 0 1-26 0z" fill="var(--lake2)"/></svg>
+    Rive
+  </div>
+  <button class="sos-pill" data-act="sos" aria-label="SOS, ça déborde">SOS</button>
+  <button class="icon-btn" data-act="settings" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
+</header>
+
+<main id="view"></main>
+
+<nav class="tabs" aria-label="Navigation">
+  <button data-act="go" data-v="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M2 19 L9 9 L13 14 L16 10 L22 19 Z"/><path d="M2 22h20"/></svg>Le lac</button>
+  <button data-act="go" data-v="meteo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 2v1.2M2 8h1.2M3.8 3.8l.8.8M12.2 3.8l-.8.8"/><path d="M8.5 20.5h8.5a4 4 0 0 0 .4-8 5 5 0 0 0-9.4 1.6 3.2 3.2 0 0 0 .5 6.4z"/></svg>Météo</button>
+  <button data-act="go" data-v="demeler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.5 8c4.5-.5 9 1.5 12 6.5M4.2 13.5c4.5-1 8.5 1 10.5 5.5M9.5 4c2 3 3 8 1.8 16.3"/></svg>Démêler</button>
+  <button data-act="go" data-v="douceur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-7.5-10.4A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 7.5 2.5c0 5.8-7.5 10.4-7.5 10.4z"/></svg>Douceur</button>
+  <button data-act="go" data-v="savoir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5V20"/></svg>Comprendre</button>
+</nav>
+
+<div id="overlay" class="ov" role="dialog" aria-modal="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ---------- utilitaires ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const dayKey = (d = new Date()) => { d = new Date(d); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); };
+const fmtDay = ts => new Date(ts).toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+const fmtShort = ts => new Date(ts).toLocaleDateString("fr-FR", {weekday:"short", day:"numeric", month:"short"});
+const fmtTime = ts => new Date(ts).toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+const dayIndex = () => Math.floor((Date.now() - new Date().getTimezoneOffset()*60000) / 864e5);
+
+/* ---------- données (restent sur le téléphone) ---------- */
+const KEY = "rive.v1";
+const KIT_DEFAULT = ["Un footing tranquille au bord du lac","Une douche chaude, lumière tamisée","Un plaid et une boisson chaude","Une playlist douce que je connais par cœur","Un message à quelqu’un qui me fait du bien","Dix minutes sans écran, fenêtre ouverte"];
+function defaults(){ return {v:1, name:"Mélina", theme:"auto", soft:false, sound:false, welcomed:false, tipHidden:false,
+  stones:0, checkins:[], journal:[], thoughts:[], worries:[], sos:[], kindWords:[], kit:KIT_DEFAULT.slice(), perms:{day:"", list:[]}, draft:null}; }
+let S = defaults();
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch(e) {}
+let saveT;
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+function saveSoon(){ clearTimeout(saveT); saveT = setTimeout(save, 400); }
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch(e) {}
+
+/* ---------- contenus ---------- */
+const W = {
+  soleil:{e:"☀️", n:"Grand soleil"}, eclaircies:{e:"🌤️", n:"Éclaircies"}, nuages:{e:"☁️", n:"Nuageux"},
+  brume:{e:"🌫️", n:"Brouillard"}, pluie:{e:"🌧️", n:"Pluie"}, orage:{e:"⛈️", n:"Orage"}
+};
+const EMO = {
+  "Douces": ["calme","apaisée","joyeuse","reconnaissante","émue","tendre","fière","soulagée","curieuse"],
+  "Lourdes": ["fatiguée","vidée","saturée","triste","nostalgique","seule","incomprise"],
+  "Agitées": ["inquiète","anxieuse","submergée","irritée","frustrée","en colère","coupable","honteuse","perdue"]
+};
+const BODY = ["gorge serrée","ventre noué","épaules tendues","mâchoire serrée","cœur qui s’emballe","tête lourde","larmes au bord des yeux","jambes lourdes","corps détendu"];
+const CARDS = [
+  "Ressentir fort n’est pas un défaut de fabrication.",
+  "Tu as le droit de partir avant la fin.",
+  "Ce qui te touche dit quelque chose de beau sur toi.",
+  "Pas besoin de tout comprendre ce soir.",
+  "Une pause n’est pas un abandon.",
+  "Le calme revient toujours, comme l’eau du lac après le vent.",
+  "Tu n’as pas à mériter le repos.",
+  "Dire non à quelque chose, c’est dire oui à toi.",
+  "Tes larmes ne sont pas un problème à régler.",
+  "Tu fais de ton mieux avec ce que tu as aujourd’hui. C’est assez.",
+  "Ce que tu imagines n’est pas encore arrivé. Peut-être que ça n’arrivera jamais.",
+  "Tu peux être aussi douce avec toi qu’avec les autres.",
+  "Les montagnes ne se pressent pas.",
+  "Ta sensibilité capte aussi la beauté. Cherches-en une, toute petite.",
+  "Un pas minuscule reste un pas.",
+  "Il n’y a pas d’urgence à aller mieux.",
+  "Tu as le droit d’avoir besoin de plus de calme que les autres.",
+  "Ce n’est pas trop. C’est juste beaucoup, en ce moment.",
+  "Tu n’es pas responsable de l’humeur de tout le monde.",
+  "Respire. Tu es ici, maintenant, et ici ça va.",
+  "Ce qui s’est mal passé ne dit pas qui tu es.",
+  "Le monde tiendra sans toi quelques minutes. Pose ta tête.",
+  "La brume finit toujours par se lever.",
+  "Tu as déjà traversé des journées comme celle-ci.",
+  "Ton rythme est le bon rythme.",
+  "Demander de l’aide, c’est une force.",
+  "Les autres pensent beaucoup moins à toi que ton cerveau ne le croit. C’est plutôt reposant.",
+  "Rien ne t’oblige à répondre tout de suite.",
+  "Fais une chose. Une seule. Puis repose-toi.",
+  "Tu mérites la patience que tu offres aux autres."
+];
+const PERMS = ["dire non","partir plus tôt","ne pas répondre tout de suite","faire une sieste","pleurer","annuler un plan","ne rien produire","demander de l’aide","avoir besoin de silence","changer d’avis"];
+const PROMPTS = [
+  {t:"Écriture libre", p:"Écris sans t’arrêter ce qui pèse en ce moment : ce qui s’est passé, et surtout ce que tu ressens et penses au fond. Ne te relis pas, ne corrige rien. Personne ne lira.", tag:"pennebaker"},
+  {t:"Ce qui m’a vidée, ce qui m’a remplie", p:"Qu’est-ce qui m’a pris de l’énergie aujourd’hui ? Et qu’est-ce qui m’en a rendu ?"},
+  {t:"Un détail beau", p:"Un petit détail beau que j’ai remarqué aujourd’hui. Ma sensibilité sert aussi à ça."},
+  {t:"Mon besoin", p:"De quoi j’aurais besoin, là, maintenant ? Qui ou quoi pourrait me l’apporter ?"},
+  {t:"Une limite", p:"Une limite que j’aimerais poser, et la phrase simple que je pourrais dire."},
+  {t:"Ce que je n’ose pas dire", p:"Ce que je ressens vraiment, et que je n’ose pas dire à voix haute."},
+  {t:"Trois petites choses", p:"Trois choses qui se sont bien passées aujourd’hui, même minuscules."},
+  {t:"La lettre d’une amie", p:"Imagine une amie qui t’aime sans condition, qui connaît tes forces et tes fragilités. Qu’est-ce qu’elle t’écrirait à propos de ce qui te pèse ? Écris sa lettre, avec sa voix.", tag:"neff"}
+];
+const TRAPS = [
+  ["lecture","Lecture de pensée","Croire savoir ce que l’autre pense.","« Il n’a rien dit, il doit me trouver nulle. »"],
+  ["film","Film imaginaire","Rejouer des conversations ou des disputes qui n’ont pas eu lieu.","« S’il me dit ça, je répondrai ça, et là il va… »"],
+  ["cristal","Boule de cristal","Prédire l’avenir, en noir.","« Ça va mal se passer, je le sens. »"],
+  ["catastrophe","Catastrophisme","Sauter directement au pire scénario.","« Elle ne répond pas : il s’est passé quelque chose de grave. »"],
+  ["perso","Personnalisation","Tout ramener à soi.","« Il est de mauvaise humeur, c’est forcément à cause de moi. »"],
+  ["emotion","Raisonnement émotionnel","Prendre un ressenti pour un fait.","« Je me sens rejetée, donc on me rejette. »"],
+  ["tout","Tout ou rien","Penser sans nuances.","« J’ai pleuré en réunion, je suis ridicule. »"],
+  ["jamais","Généralisation","Un événement devient une règle.","« Je n’y arrive jamais. »"],
+  ["filtre","Filtre négatif","Ne retenir que ce qui cloche.","« Quatre compliments, une remarque : je ne retiens que la remarque. »"],
+  ["doit","Les « il faut »","Des règles rigides envers soi.","« Je dois tenir, je n’ai pas le droit d’être fatiguée. »"]
+];
+const BREATHS = {
+  soupir:{short:"Soupir cyclique", name:"Soupir cyclique", desc:"Deux inspirations par le nez, une longue expiration par la bouche. C’est l’expiration longue qui calme.",
+    phases:[["in","Inspire par le nez",2,1],["in2","Encore une petite gorgée d’air",1,1.12],["out","Expire tout doucement par la bouche…",6,.62]]},
+  longue:{short:"4 · 6", name:"Expiration longue", desc:"Inspire sur 4 temps, expire sur 6. Plus simple, idéal pour s’endormir.",
+    phases:[["in","Inspire…",4,1],["out","Expire lentement…",6,.62]]},
+  carre:{short:"Carrée", name:"Respiration carrée", desc:"4 temps pour inspirer, garder, expirer, attendre. Pour quand le mental a besoin d’un rythme à suivre.",
+    phases:[["in","Inspire…",4,1],["hold","Garde l’air…",4,1],["out","Expire…",4,.62],["hold2","Pause, poumons vides…",4,.62]]}
+};
+const GUIDED = {
+  heart:{title:"Mains sur le cœur", intro:"Une minute de chaleur. Le toucher bienveillant aide le corps à se sentir en sécurité, même quand c’est toi qui le donnes.",
+    done:"Cette chaleur, tu peux la retrouver n’importe où, n’importe quand. Elle est à toi.",
+    steps:[{t:"Pose une main sur ton cœur, ou les deux. Sens la chaleur de tes paumes.",s:10},{t:"Laisse la respiration ralentir toute seule, sans forcer.",s:10},{t:"Remarque le léger mouvement de ta poitrine sous tes mains.",s:12},{t:"Dis-toi intérieurement : « Je suis là. »",s:10},{t:"Si une autre position te fait plus de bien, essaie-la : une main sur la joue, ou les bras croisés comme un câlin.",s:13},{t:"Reste encore un instant avec cette douceur.",s:12}]},
+  pmr:{title:"Relâcher le corps", intro:"Une relaxation musculaire express : contracter à moitié de ta force, puis relâcher. La différence aide le corps à lâcher prise.",
+    done:"Ton corps vient d’apprendre, encore une fois, la différence entre tendu et relâché.",
+    steps:[{t:"Serre les poings…",s:5,k:"tense"},{t:"…et relâche. Sens tes mains s’ouvrir.",s:10},{t:"Monte les épaules vers les oreilles…",s:5,k:"tense"},{t:"…et laisse-les tomber.",s:10},{t:"Plisse le visage, serre la mâchoire…",s:5,k:"tense"},{t:"…relâche. Laisse la mâchoire s’entrouvrir.",s:10},{t:"Contracte le ventre…",s:5,k:"tense"},{t:"…relâche. Laisse-le s’arrondir.",s:10},{t:"Recroqueville les orteils…",s:5,k:"tense"},{t:"…relâche. Sens tes pieds lourds sur le sol.",s:10},{t:"Respire. Ton corps entier est un peu plus lourd, un peu plus posé.",s:10}]}
+};
+const GROUND = [
+  [5,"choses que tu vois","Cherche des détails : une couleur, une ombre, un reflet."],
+  [4,"choses que tu peux toucher","Le tissu sous tes doigts, le sol sous tes pieds, l’air sur ta peau."],
+  [3,"sons que tu entends","Proches, lointains… même ta respiration compte."],
+  [2,"odeurs que tu sens","Si rien ne vient, pense à deux odeurs que tu aimes."],
+  [1,"goût dans ta bouche","Ou une phrase gentille à te dire, là, tout de suite."]
+];
+const AID = ["Baisser la lumière, ou mettre des lunettes de soleil","Réduire le bruit : casque, bouchons, ou une musique douce connue par cœur","T’isoler cinq minutes, même aux toilettes, ça compte","Boire quelques gorgées d’eau fraîche","T’envelopper : plaid, pull, capuche","Poser les yeux au loin : une fenêtre, l’horizon, le ciel","Manger un petit quelque chose si tu n’as rien mangé","Annuler ou reporter une chose de la journée"];
+const SELFCOMP = [
+  {t:"Pense à ce qui te pèse en ce moment. Pas le pire de ta vie, juste ce qui est là aujourd’hui. Où est-ce que ça se loge dans ton corps ?"},
+  {t:"Dis-toi doucement : « C’est un moment difficile. » Ou : « Ça fait mal, là. » Tu ne cherches pas à le chasser, juste à le reconnaître.", h:"Pleine conscience"},
+  {t:"Puis : « Je ne suis pas la seule. » En ce moment même, des milliers de personnes ressentent quelque chose de très proche. Ressentir fort, c’est humain.", h:"Humanité partagée"},
+  {t:"Pose une main sur ton cœur. Quels mots une amie tendre te dirait, là ? Écris-les, puis dis-les-toi.", h:"Bienveillance", input:true},
+  {t:"Reste un instant avec ça. Tu viens de te traiter en amie. Ce n’est pas rien."}
+];
+const DAILY = [
+  {t:"Soupir cyclique, trois minutes", d:"Deux inspirations par le nez, une longue expiration par la bouche. Dans une étude de Stanford, c’est la pratique qui a le plus amélioré l’humeur.", a:"breath", v:"soupir", b:"Respirer"},
+  {t:"La pause d’autocompassion", d:"Cinq petites étapes pour te parler comme à une amie.", a:"selfcomp", b:"Commencer"},
+  {t:"Écrire ce qui pèse", d:"Quelques minutes d’écriture libre. Mettre des mots apaise l’alarme du cerveau.", a:"journal", v:"0", b:"Ouvrir le carnet"},
+  {t:"Les petits bateaux", d:"Pose une pensée sur un bateau et regarde-la traverser le lac.", a:"boats", b:"Aller au lac"},
+  {t:"Mains sur le cœur", d:"Une minute de chaleur, rien que pour toi.", a:"heart", b:"Commencer"},
+  {t:"Relâcher le corps", d:"Contracter puis relâcher, pour que les épaules redescendent.", a:"pmr", b:"Commencer"},
+  {t:"Fait ou film ?", d:"Démêler une histoire que ton cerveau t’a racontée aujourd’hui.", a:"trNew", b:"Démêler"}
+];
+
+/* ---------- icônes ---------- */
+const ICON = {
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  chev:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>'
+};
+const stoneSVG = '<svg class="done-stone" viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="74" rx="44" ry="14" fill="#8E9AA0"/><ellipse cx="58" cy="52" rx="32" ry="12" fill="#A9B3B7"/><ellipse cx="62" cy="34" rx="22" ry="9" fill="#7F8C92"/><ellipse cx="60" cy="19" rx="13" ry="6" fill="#C2C9CC"/></svg>';
+
+/* ---------- son doux (désactivé par défaut) ---------- */
+let actx = null;
+function audioUnlock(){ if (!S.sound) return; try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch(e) {} }
+function tone(f, d){ if (!S.sound || !actx) return; try {
+  const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+  o.type = "sine"; o.frequency.value = f;
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.06, t + .3); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + d + .05);
+} catch(e) {} }
+
+/* ---------- thème ---------- */
+function applyTheme(){
+  const r = document.documentElement;
+  if (S.theme === "auto") delete r.dataset.theme; else r.dataset.theme = S.theme;
+  document.body.classList.toggle("soft", !!S.soft);
+  const dark = S.theme === "dark" || (S.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+  $("#themeColor").setAttribute("content", dark ? "#0F1A20" : "#E9EFF0");
+}
+
+/* ---------- toast, galets ---------- */
+let toastT;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2800); }
+function addStone(){ S.stones++; save(); setTimeout(() => toast("Un galet de plus sur ton cairn"), 300); }
+
+/* ---------- overlay ---------- */
+const ov = $("#overlay");
+let cleanup = [];
+const cur = {};
+function stopAll(){ cleanup.forEach(f => { try { f(); } catch(e) {} }); cleanup = []; }
+function later(fn, ms){ const id = setTimeout(fn, ms); cleanup.push(() => clearTimeout(id)); return id; }
+function every(fn, ms){ const id = setInterval(fn, ms); cleanup.push(() => clearInterval(id)); return id; }
+function head(back){ return `<div class="ov-head">${back ? `<button class="icon-btn" data-act="${back}" aria-label="Retour">${ICON.back}</button>` : "<span></span>"}<button class="icon-btn" data-act="close" aria-label="Fermer">${ICON.x}</button></div>`; }
+function openOv(html){ stopAll(); ov.innerHTML = `<div class="ov-in">${html}</div>`; ov.classList.add("show"); ov.scrollTop = 0; document.body.classList.add("locked"); }
+function closeOv(){ stopAll(); cur.then = null; ov.classList.remove("show"); ov.innerHTML = ""; document.body.classList.remove("locked"); render(); }
+function doneScreen(msg){
+  const next = cur.then ? "Continuer" : "Revenir";
+  openOv(`${head()}<div class="center">${stoneSVG}<p class="done-msg">${msg}</p><button class="btn primary block" data-act="exDone">${next}</button></div>`);
+}
+function exDone(){ if (cur.then){ const f = cur.then; cur.then = null; f(); } else closeOv(); }
+
+/* ---------- décor : le lac ---------- */
+function skyFor(h){
+  if (h < 6 || h >= 21) return {a:"#1C2C46", b:"#40567A", night:true};
+  if (h < 9) return {a:"#F2C7B6", b:"#D3E4EC"};
+  if (h < 17) return {a:"#A8D1E2", b:"#E6F2F6"};
+  return {a:"#E9AE93", b:"#F3DCCB"};
+}
+function mountains(){
+  return `<path d="M0 128 L38 74 L62 96 L108 44 L150 92 L186 60 L222 99 L262 52 L302 90 L332 68 L360 84 L360 128 Z" fill="#B5C8D1"/>
+  <path d="M108 44 L97 58 L104 56 L109 61 L114 55 L120 58 Z M262 52 L252 64 L258 62 L263 66 L268 61 L273 64 Z" fill="#fff" opacity=".8"/>
+  <path d="M0 128 L28 102 L64 84 L96 106 L140 78 L182 111 L216 90 L256 113 L292 94 L330 109 L360 98 L360 128 Z" fill="#8BA6B3"/>`;
+}
+function cairn(n, x, base){
+  const Wd = [30,25,21,18,15,12,10,8], cols = ["#8E9AA0","#A9B3B7","#7F8C92","#B6BEC1","#97A4A9","#C4CBCE","#8A979D","#AEB8BC"];
+  let y = base, out = "";
+  for (let i = 0; i < Math.min(n, 8); i++){ const w = Wd[i], h = w * .44, cy = y - h/2; out += `<ellipse cx="${x + (i % 2 ? 1.5 : -1.5)}" cy="${cy.toFixed(1)}" rx="${w/2}" ry="${(h/2).toFixed(1)}" fill="${cols[i]}"/>`; y = cy - h/2 + 1.2; }
+  return out;
+}
+function heroSVG(){
+  const s = skyFor(new Date().getHours());
+  const orb = s.night
+    ? `<circle cx="292" cy="40" r="11" fill="#F1EBD3"/><circle cx="297" cy="36" r="10" fill="${s.a}"/>`
+    : `<circle cx="292" cy="44" r="15" fill="#FBE3A6" opacity=".95"/>`;
+  return `<svg viewBox="0 0 360 210" role="img" aria-label="Un lac de montagne, avec ton cairn de ${S.stones} galet${S.stones>1?"s":""} sur la rive">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.a}"/><stop offset="1" stop-color="${s.b}"/></linearGradient>
+  <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FB0C0"/><stop offset="1" stop-color="#4E8799"/></linearGradient>
+  <clipPath id="lc"><rect x="0" y="128" width="360" height="82"/></clipPath></defs>
+  <rect width="360" height="210" fill="url(#sky)"/>${orb}${mountains()}
+  <rect x="0" y="128" width="360" height="82" fill="url(#lake)"/>
+  <g clip-path="url(#lc)" opacity=".22"><g transform="translate(0 256) scale(1 -1)">${mountains()}</g></g>
+  <g stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"><path class="rip" d="M190 150 h46"/><path class="rip" d="M240 168 h34"/><path class="rip" d="M168 186 h56"/></g>
+  <path d="M0 210 L0 152 Q48 140 112 154 Q160 166 196 210 Z" fill="#6E8F78"/>
+  ${cairn(S.stones, 64, 160)}
+  </svg>`;
+}
+function lakeBg(){
+  const s = skyFor(new Date().getHours());
+  return `<svg class="bg" viewBox="0 0 360 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.a}"/><stop offset="1" stop-color="${s.b}"/></linearGradient><linearGradient id="lake2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FB0C0"/><stop offset="1" stop-color="#4E8799"/></linearGradient></defs>
+  <rect width="360" height="330" fill="url(#sky2)"/>${mountains()}<rect y="128" width="360" height="202" fill="url(#lake2)"/>
+  <g stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".5"><path class="rip" d="M40 170 h50"/><path class="rip" d="M220 230 h60"/><path class="rip" d="M120 290 h44"/></g></svg>`;
+}
+
+/* ---------- vues ---------- */
+function lastCheckin(day){ return S.checkins.find(c => dayKey(c.ts) === day); }
+const VIEWS = {
+  home(){
+    const h = new Date().getHours();
+    const hello = h < 5 ? "Douce nuit" : h < 12 ? "Bonjour" : h < 18 ? "Coucou" : "Bonsoir";
+    const today = lastCheckin(dayKey());
+    const d = DAILY[dayIndex() % DAILY.length];
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const standalone = window.navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+    const tip = (isIOS && !standalone && !S.tipHidden) ? `<section class="help"><p><b>Pour l’avoir comme une vraie app :</b> touche le bouton Partager de Safari, puis « Sur l’écran d’accueil ». Tes notes y sont mieux protégées.</p><p style="margin-top:8px"><button class="link" data-act="hideTip">C’est fait</button></p></section>` : "";
+    return `
+    <div class="hero ${skyFor(h).night ? "night" : ""}">${heroSVG()}
+      <div class="hero-txt"><p class="date">${fmtDay(Date.now())}</p><h1>${hello} ${esc(S.name)}</h1></div>
+      <p class="cairn-note">${S.stones ? `Ton cairn : ${S.stones} galet${S.stones>1?"s":""}` : "Ton cairn attend son premier galet"}</p>
+    </div>
+    <button class="sos-band" data-act="sos"><div><strong>Ça déborde ?</strong><span>On respire ensemble, et on redescend doucement.</span></div><span class="ring">SOS</span></button>
+    ${tip}
+    <section class="card">
+      <h2>Le ciel à l’intérieur</h2>
+      <p class="mut small">${today ? `Aujourd’hui : ${W[today.weather].n.toLowerCase()} ${W[today.weather].e}. Le temps change vite à la montagne, tu peux refaire le point.` : "Comment ça va, là, maintenant ?"}</p>
+      <div class="wx-row">${Object.entries(W).map(([k, w]) => `<button class="wx" data-act="ciNew" data-v="${k}" aria-label="${w.n}">${w.e}</button>`).join("")}</div>
+    </section>
+    <section class="card">
+      <p class="label">Pour aujourd’hui</p>
+      <h2>${d.t}</h2>
+      <p class="mut small">${d.d}</p>
+      <div><button class="btn primary" data-act="${d.a}" ${d.v ? `data-v="${d.v}"` : ""}>${d.b}</button></div>
+    </section>
+    <section class="plain">
+      <p class="quote">${esc(CARDS[dayIndex() % CARDS.length])}</p>
+      <button class="link" data-act="go" data-v="douceur">Tirer une autre carte</button>
+    </section>
+    <section class="plain">
+      <p class="mut small">Chaque moment pris pour toi pose un galet sur ton cairn, au bord du lac. Pas de série à tenir, pas de retard possible.</p>
+    </section>`;
+  },
+
+  meteo(){
+    const days = [];
+    for (let i = 13; i >= 0; i--){ const d = new Date(); d.setDate(d.getDate() - i); days.push(d); }
+    const strip = days.map(d => { const c = lastCheckin(dayKey(d)); return `<div>${c ? W[c.weather].e : '<span class="none">·</span>'}<small>${d.toLocaleDateString("fr-FR",{weekday:"narrow"})}</small></div>`; }).join("");
+    const entries = S.checkins.slice(0, 12).map(c => `
+      <div class="entry"><div class="head"><span class="em">${W[c.weather].e}</span><div><b>${fmtShort(c.ts)}</b> <span class="mut small">${fmtTime(c.ts)}</span>${c.energy ? `<div class="energy" aria-label="Énergie ${c.energy} sur 5">${"●".repeat(c.energy)}${"○".repeat(5 - c.energy)} énergie</div>` : ""}</div></div>
+      ${(c.emo.length || c.body.length) ? `<div class="tags">${c.emo.map(e => `<i>${esc(e)}</i>`).join("")}${c.body.map(e => `<i>${esc(e)}</i>`).join("")}</div>` : ""}
+      ${c.drain ? `<p class="small" style="margin-top:6px"><span class="mut">M’a vidée :</span> ${esc(c.drain)}</p>` : ""}
+      ${c.fill ? `<p class="small"><span class="mut">M’a remplie :</span> ${esc(c.fill)}</p>` : ""}</div>`).join("");
+    const pages = S.journal.slice(0, 30).map(j => `<button class="tool" data-act="jOpen" data-id="${j.id}"><div style="min-width:0"><b>${esc(PROMPTS[j.pi]?.t || "Page")}</b><span>${fmtShort(j.ts)}</span><span class="excerpt">${esc(j.text)}</span></div><span class="chev">${ICON.chev}</span></button>`).join("");
+    return `
+    <section><h1>Ta météo intérieure</h1><p class="mut" style="margin-top:6px">Noter ce que tu ressens, avec des mots précis, aide ton cerveau à baisser le volume de l’alarme.</p></section>
+    <section><button class="btn primary block" data-act="ciNew">Faire le point maintenant</button></section>
+    <section class="card"><h2>Tes quatorze derniers jours</h2><div class="strip">${strip}</div></section>
+    ${entries ? `<section class="card"><h2>Tes derniers relevés</h2><div>${entries}</div></section>` : ""}
+    <section><h2>Ton carnet</h2><p class="mut small" style="margin-top:4px">Choisis une invitation à écrire.</p></section>
+    <section class="tools" style="margin-top:12px">${PROMPTS.map((p, i) => `<button class="tool" data-act="journal" data-v="${i}"><div><b>${p.t}</b><span>${esc(p.p.length > 90 ? p.p.slice(0, 88) + "…" : p.p)}</span></div><span class="chev">${ICON.chev}</span></button>`).join("")}</section>
+    ${pages ? `<section><h2>Tes pages</h2></section><section class="tools" style="margin-top:12px">${pages}</section>` : ""}`;
+  },
+
+  demeler(){
+    const checked = S.worries.filter(w => w.out);
+    const notHappened = checked.filter(w => w.out === "non").length;
+    const pending = S.worries.filter(w => !w.out);
+    const today = dayKey();
+    const threads = S.thoughts.slice(0, 20).map(t => `<button class="tool" data-act="trView" data-id="${t.id}"><div style="min-width:0"><b>${t.before} → ${t.after}</b><span>${fmtShort(t.ts)}</span><span class="excerpt">${esc(t.neo || t.story)}</span></div><span class="chev">${ICON.chev}</span></button>`).join("");
+    return `
+    <section><h1>Ce que mon cerveau me raconte</h1><p class="mut" style="margin-top:6px">Ton cerveau capte tout et comble les trous avec des histoires. Souvent, ces histoires n’ont pas eu lieu. On les démêle doucement, sans te juger.</p></section>
+    <section class="tools">
+      <button class="tool" data-act="trNew"><span class="ic">🧶</span><div><b>Fait ou film ?</b><span>Séparer ce qui s’est passé de ce que ton cerveau en a fait.</span></div><span class="chev">${ICON.chev}</span></button>
+      <button class="tool" data-act="boats"><span class="ic">⛵</span><div><b>Les petits bateaux</b><span>Poser une pensée qui tourne en boucle sur l’eau, et la regarder partir.</span></div><span class="chev">${ICON.chev}</span></button>
+    </section>
+    <section class="card" id="box">
+      <h2>La boîte à soucis</h2>
+      <p class="mut small">Un « et si… » tourne en boucle ? Écris-le et range-le ici. Plus tard, tu noteras s’il s’est vraiment produit.</p>
+      <textarea id="wText" placeholder="J’ai peur que…" rows="2"></textarea>
+      <div class="field"><label for="wDate">Je saurai d’ici le (facultatif)</label><input class="input" type="date" id="wDate"></div>
+      <button class="btn primary" data-act="wAdd">Ranger dans la boîte</button>
+      ${checked.length ? `<p class="help"><b>${notHappened} sur ${checked.length}</b> de tes soucis vérifiés ne se sont pas produits.</p>` : ""}
+      ${pending.length ? `<div>${pending.map(w => `<div class="entry"><p>${esc(w.text)}</p><div class="between" style="margin-top:6px"><span class="mut tiny">${w.due ? (w.due <= today ? "C’est le moment de vérifier" : "À vérifier le " + new Date(w.due + "T12:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"})) : "Déposé le " + fmtShort(w.ts)}</span><button class="link" data-act="wOpen" data-id="${w.id}">C’est arrivé ?</button></div></div>`).join("")}</div>` : ""}
+    </section>
+    <details class="acc"><summary>Pourquoi la boîte marche</summary><div class="acc-b">
+      <p class="small">Dans une étude de Penn State, des personnes très anxieuses ont noté leurs soucis pendant dix jours, puis vérifié ce qui s’était réellement passé : environ 91 % ne se sont jamais produits. Et plus elles le constataient, plus leur inquiétude baissait.</p>
+      <p class="small">Astuce : choisis un « moment des soucis » de quinze minutes dans la journée. Quand un souci arrive en dehors, note-le ici et dis-toi « je m’en occupe à 18 h ». Souvent, à 18 h, il a perdu de sa force.</p>
+      <p class="src">LaFreniere & Newman, Behavior Therapy, 2020.</p></div></details>
+    <section><h2>Les pièges de pensée</h2><p class="mut small" style="margin-top:4px">Tout le monde y tombe. Les reconnaître, c’est déjà en sortir à moitié.</p></section>
+    ${TRAPS.map(t => `<details class="acc"><summary>${t[1]}</summary><div class="acc-b"><p class="small">${t[2]}</p><p class="small mut">${t[3]}</p></div></details>`).join("")}
+    ${threads ? `<section><h2>Tes fils démêlés</h2></section><section class="tools" style="margin-top:12px">${threads}</section>` : ""}`;
+  },
+
+  douceur(){
+    if (S.perms.day !== dayKey()) S.perms = {day:dayKey(), list:[]};
+    return `
+    <section><h1>Douceur</h1><p class="mut" style="margin-top:6px">Les personnes sensibles sont souvent très douces avec les autres, et très dures avec elles-mêmes. Ici, on rééquilibre.</p></section>
+    <section class="tools">
+      <button class="tool" data-act="selfcomp"><span class="ic">🌿</span><div><b>La pause d’autocompassion</b><span>Cinq étapes pour te parler comme à une amie. Environ trois minutes.</span></div><span class="chev">${ICON.chev}</span></button>
+      <button class="tool" data-act="heart"><span class="ic">🤲</span><div><b>Mains sur le cœur</b><span>Une minute de chaleur guidée.</span></div><span class="chev">${ICON.chev}</span></button>
+      <button class="tool" data-act="journal" data-v="7"><span class="ic">💌</span><div><b>La lettre d’une amie</b><span>Écrire ce qu’une amie qui t’aime te dirait.</span></div><span class="chev">${ICON.chev}</span></button>
+    </section>
+    <section class="plain">
+      <p class="label">Une carte, au hasard</p>
+      <p class="quote" id="cardTxt">${esc(CARDS[cur.card ?? (dayIndex() % CARDS.length)])}</p>
+      <button class="btn" data-act="drawCard">Tirer une autre carte</button>
+    </section>
+    <section class="card">
+      <h2>Aujourd’hui, je m’autorise à…</h2>
+      <div class="chips">${PERMS.map(p => `<button class="chip ${S.perms.list.includes(p) ? "on" : ""}" data-act="perm" data-v="${esc(p)}">${p}</button>`).join("")}</div>
+      <p class="mut tiny">Ces permissions se remettent à zéro chaque jour.</p>
+    </section>
+    <section class="card">
+      <h2>Mon kit doux</h2>
+      <p class="mut small">Ce qui te recharge, à garder sous la main pour les jours gris.</p>
+      <div>${S.kit.map((k, i) => `<div class="between entry"><span>${esc(k)}</span><button class="icon-btn" data-act="kitDel" data-v="${i}" aria-label="Retirer">${ICON.x}</button></div>`).join("")}</div>
+      <div class="row"><input class="input" id="kitIn" placeholder="Ajouter une chose" style="flex:1"><button class="btn" data-act="kitAdd">Ajouter</button></div>
+    </section>
+    ${S.kindWords.length ? `<section class="card"><h2>Mes mots pour moi</h2>${S.kindWords.slice(0, 8).map(w => `<p class="quote" style="font-size:19px">${esc(w.text)}</p>`).join("")}</section>` : ""}`;
+  },
+
+  savoir(){
+    return `
+    <section><h1>Comprendre</h1><p class="mut" style="margin-top:6px">Ce que dit la recherche sur l’hypersensibilité, et pourquoi chaque exercice de Rive est là.</p></section>
+    <details class="acc" open><summary>L’hypersensibilité, c’est quoi ?</summary><div class="acc-b">
+      <p class="small">Les chercheurs parlent de <b>sensibilité de traitement sensoriel</b>. C’est un trait de tempérament, comme l’introversion : pas une maladie, pas un diagnostic, pas un défaut. Il a été décrit par la psychologue Elaine Aron et son mari Arthur Aron dans les années 1990.</p>
+      <p class="small">Ton système nerveux traite les informations plus en profondeur que la moyenne. Ça a un prix (la fatigue, la surcharge) et une valeur (la finesse, l’empathie, l’intuition).</p>
+      <p class="src">Aron & Aron, Journal of Personality and Social Psychology, 1997.</p></div></details>
+    <details class="acc"><summary>Les quatre facettes</summary><div class="acc-b">
+      <p class="small">Elaine Aron les résume par l’acronyme anglais DOES :</p>
+      <ul class="small"><li><b>Profondeur de traitement</b> : tu réfléchis à tout, tu relis les conversations, tu vois les nuances.</li><li><b>Surstimulation</b> : le bruit, la foule, les journées chargées te vident plus vite.</li><li><b>Émotions et empathie</b> : tu ressens fort, et tu ressens les autres.</li><li><b>Subtilités</b> : tu remarques les petits détails, un changement de ton, une odeur, une lumière.</li></ul>
+      <p class="src">Elaine Aron, « The highly sensitive person », Aeon.</p></div></details>
+    <details class="acc"><summary>Orchidées, tulipes et pissenlits</summary><div class="acc-b">
+      <p class="small">Une étude sur environ 900 adultes a trouvé trois groupes : les plus sensibles (les orchidées, environ 31 %), les moyennement sensibles (les tulipes, 40 %), et les moins sensibles (les pissenlits, 29 %).</p>
+      <p class="small">Le plus beau : les orchidées réagissent plus fort au négatif, mais aussi plus fort au positif. Dans un environnement doux et soutenant, elles s’épanouissent souvent plus que les autres. Prendre soin de ton environnement n’est pas un caprice, c’est ton terreau.</p>
+      <p class="src">Lionetti, Aron, Aron, Burns, Jagiellowicz & Pluess, Translational Psychiatry, 2018.</p></div></details>
+    <details class="acc"><summary>Le seau qui déborde</summary><div class="acc-b">
+      <p class="small">Imagine un seau : chaque bruit, chaque émotion captée, chaque décision y ajoute un peu d’eau. Chez une personne sensible, il se remplit plus vite. Quand il déborde, ce n’est pas que tu « gères mal » : c’est qu’il est plein.</p>
+      <p class="small">D’où deux réflexes : vider le seau régulièrement (pauses, calme, nature, sommeil), et repérer tôt quand il monte. C’est exactement à ça que servent la météo intérieure et le bouton SOS.</p></div></details>
+    <details class="acc"><summary>Pourquoi ces exercices ?</summary><div class="acc-b">
+      <ul class="small">
+        <li><b>Soupir cyclique</b> : dans un essai randomisé de Stanford, cinq minutes par jour pendant un mois ont amélioré l’humeur davantage que la méditation de pleine conscience, et ralenti la respiration au repos. <span class="src">Balban et al., Cell Reports Medicine, 2023.</span></li>
+        <li><b>Météo intérieure</b> : mettre un mot sur une émotion diminue l’activité de l’amygdale, le centre d’alarme du cerveau. <span class="src">Lieberman et al., Psychological Science, 2007.</span></li>
+        <li><b>Écriture libre</b> : écrire 15 à 20 minutes sur ce qui nous bouleverse, sur quelques jours, a des effets mesurés sur la santé physique et mentale. <span class="src">Pennebaker ; synthèse de Baikie & Wilhelm, 2005.</span></li>
+        <li><b>Autocompassion</b> : la pause en trois temps (pleine conscience, humanité partagée, bienveillance) vient du programme de Kristin Neff et Christopher Germer, évalué en essai contrôlé. <span class="src">Neff & Germer, Journal of Clinical Psychology, 2013.</span></li>
+        <li><b>Fait ou film ?</b> : c’est la restructuration cognitive des thérapies cognitives et comportementales, issue des travaux d’Aaron Beck sur les distorsions de pensée.</li>
+        <li><b>Boîte à soucis</b> : vérifier ce que deviennent ses soucis réduit l’inquiétude. <span class="src">LaFreniere & Newman, 2020.</span></li>
+        <li><b>Petits bateaux</b> : un exercice de « défusion » de la thérapie d’acceptation et d’engagement : regarder une pensée au lieu de regarder à travers elle.</li>
+        <li><b>Ancrage 5-4-3-2-1 et relâchement musculaire</b> : des techniques classiques pour ramener l’attention dans le corps et le présent.</li>
+      </ul></div></details>
+    <details class="acc"><summary>Ce que Rive n’est pas</summary><div class="acc-b">
+      <p class="small">Rive ne remplace pas un ou une psy. L’hypersensibilité n’est pas un trouble, mais elle peut cohabiter avec de l’anxiété, un épuisement ou une déprime. Si tu souffres souvent, depuis longtemps, ou si ça t’empêche de vivre comme tu voudrais, parles-en à ton médecin : un accompagnement (TCC, thérapie d’acceptation, sophrologie…) peut vraiment aider.</p>
+      <p class="help"><b>Si des idées noires s’invitent</b>, le <a href="tel:3114"><b>3114</b></a> répond gratuitement, 24 h/24 et 7 j/7, par des soignants formés. En cas d’urgence : le <a href="tel:15">15</a> ou le <a href="tel:112">112</a>.</p></div></details>
+    <details class="acc"><summary>Sources</summary><div class="acc-b"><ul class="small">
+      <li><a href="https://sensitivityresearch.com/publication/sensory-processing-sensitivity-and-its-relation-to-introversion-and-emotionality" target="_blank" rel="noopener">Aron & Aron (1997), sensibilité de traitement sensoriel</a></li>
+      <li><a href="https://aeon.co/essays/what-does-it-mean-to-be-a-highly-sensitive-person" target="_blank" rel="noopener">Elaine Aron, The highly sensitive person (Aeon)</a></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5802697/" target="_blank" rel="noopener">Lionetti et al. (2018), orchidées, tulipes et pissenlits</a></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9873947" target="_blank" rel="noopener">Balban et al. (2023), soupir cyclique</a></li>
+      <li><a href="https://doi.org/10.1111/j.1467-9280.2007.01916.x" target="_blank" rel="noopener">Lieberman et al. (2007), mettre des mots sur les émotions</a></li>
+      <li><a href="https://www.cambridge.org/core/product/ED2976A61F5DE56B46F07A1CE9EA9F9F/core-reader" target="_blank" rel="noopener">Baikie & Wilhelm (2005), bienfaits de l’écriture expressive</a></li>
+      <li><a href="https://ggia.berkeley.edu/practice/self_compassion_break" target="_blank" rel="noopener">La pause d’autocompassion (Greater Good, Berkeley)</a></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7233480" target="_blank" rel="noopener">LaFreniere & Newman (2020), les soucis qui n’arrivent pas</a></li>
+      <li><a href="https://positivepsychology.com/fr/therapie-cognitivo-comportementale-tcc-restructuration-cognitive-distorsions-cognitives/" target="_blank" rel="noopener">Restructuration cognitive et distorsions de pensée</a></li>
+      <li><a href="https://3114.fr" target="_blank" rel="noopener">3114, numéro national de prévention du suicide</a></li>
+    </ul></div></details>
+    <section class="plain"><p class="mut tiny">Rive fonctionne sans compte et sans connexion. Tout ce que tu écris reste sur ce téléphone.</p></section>`;
+  }
+};
+
+let route = "home";
+function render(){ $("#view").innerHTML = VIEWS[route](); }
+function go(r){
+  if (!VIEWS[r]) r = "home";
+  route = r;
+  $$(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.v === r));
+  render(); window.scrollTo(0, 0);
+  try { history.replaceState(null, "", "#" + r); } catch(e) {}
+}
+
+/* ---------- SOS ---------- */
+function sosStart(){
+  cur.sos = {ts:Date.now(), before:7, after:null};
+  openOv(`${head()}<div class="ov-body">
+    <h1>Tu es en sécurité.</h1>
+    <p class="mut">Ce que tu ressens est intense, et ça va redescendre. On fait juste une chose à la fois.</p>
+    <div class="card center"><p class="label">Ça déborde à combien, sur 10 ?</p><p class="rangeval" id="sBv">7</p>
+      <input type="range" min="0" max="10" value="7" id="sB" data-out="sBv" aria-label="Intensité sur 10"></div>
+    <button class="btn dusk block" data-act="sosBreath">On respire ensemble, une minute</button>
+    <button class="btn ghost block" data-act="sosMenu">Choisir un autre geste</button>
+  </div>`);
+}
+function readSosBefore(){ const r = $("#sB"); if (r) cur.sos.before = +r.value; }
+function sosMenu(){
+  if (!cur.sos) cur.sos = {ts:Date.now(), before:null};
+  openOv(`${head()}<div class="ov-body">
+    <h1>Et maintenant ?</h1><p class="mut">Choisis ce qui t’appelle. Il n’y a pas de mauvais choix.</p>
+    <div class="tools">
+      <button class="tool" data-act="sosEx" data-v="breath"><span class="ic">🌬️</span><div><b>Respirer encore</b><span>Soupir cyclique, une minute.</span></div></button>
+      <button class="tool" data-act="sosEx" data-v="ground"><span class="ic">🪨</span><div><b>Ancrage 5-4-3-2-1</b><span>Revenir ici avec tes cinq sens.</span></div></button>
+      <button class="tool" data-act="sosEx" data-v="aid"><span class="ic">🕯️</span><div><b>Baisser les stimulations</b><span>Lumière, bruit, monde : on vide le seau.</span></div></button>
+      <button class="tool" data-act="sosEx" data-v="pmr"><span class="ic">🧘</span><div><b>Relâcher le corps</b><span>Contracter, relâcher. Un peu moins d’une minute et demie.</span></div></button>
+      <button class="tool" data-act="sosEx" data-v="heart"><span class="ic">🤲</span><div><b>Mains sur le cœur</b><span>Une minute de chaleur.</span></div></button>
+    </div>
+    ${S.kit.length ? `<div class="help"><b>Ton kit doux</b><ul style="margin:6px 0 0;padding-left:20px">${S.kit.slice(0, 6).map(k => `<li>${esc(k)}</li>`).join("")}</ul></div>` : ""}
+    <button class="btn primary block" data-act="sosEnd">Ça va un peu mieux</button>
+  </div>`);
+}
+function sosEnd(){
+  const b = cur.sos?.before;
+  const start = b == null ? 4 : Math.max(0, b - 2);
+  openOv(`${head()}<div class="ov-body center">
+    <h1>Et là, à combien ?</h1>
+    <div class="card"><p class="rangeval" id="sAv">${start}</p><input type="range" min="0" max="10" value="${start}" id="sA" data-out="sAv" aria-label="Intensité sur 10"></div>
+    <button class="btn primary block" data-act="sosSave">Terminer</button></div>`);
+}
+function sosSave(){
+  const a = +($("#sA")?.value ?? 0), b = cur.sos?.before;
+  S.sos.unshift({ts:cur.sos?.ts || Date.now(), before:b, after:a}); S.sos = S.sos.slice(0, 200); addStone();
+  const msg = (b != null && a < b) ? `De ${b} à ${a}. Ton corps sait redescendre, et tu viens de l’aider.` : "C’est encore haut, et c’est d’accord. Tu peux recommencer, ou t’envelopper dans quelque chose de doux.";
+  cur.sos = null;
+  openOv(`${head()}<div class="center">${stoneSVG}<p class="done-msg">${msg}</p>
+    <p class="help" style="text-align:left">Si des idées noires s’invitent, le <a href="tel:3114"><b>3114</b></a> répond gratuitement, jour et nuit.</p>
+    <button class="btn primary block" data-act="close" style="margin-top:16px">Revenir au lac</button></div>`);
+}
+
+/* ---------- respiration ---------- */
+function openBreath(key, opts = {}){
+  key = BREATHS[key] ? key : "soupir";
+  cur.then = opts.then || null;
+  cur.b = {key, min:opts.minutes || 3};
+  const b = BREATHS[key];
+  openOv(`${head()}<div class="center">
+    <div class="seg" id="bSeg">${Object.entries(BREATHS).map(([k, x]) => `<button class="${k === key ? "on" : ""}" data-act="bType" data-v="${k}">${x.short}</button>`).join("")}</div>
+    <h2 style="margin-top:20px">${b.name}</h2><p class="mut small" style="margin-top:6px">${b.desc}</p>
+    <div class="orb-wrap"><div class="orb-halo"></div><div class="orb" id="orb"></div></div>
+    <p class="orb-label" id="orbLabel">Installe-toi, épaules basses.</p>
+    <p class="mut small" id="bLeft">&nbsp;</p>
+    <div class="chips" id="bDur" style="margin:10px 0 18px">${[1,3,5].map(m => `<button class="chip ${m === cur.b.min ? "on" : ""}" data-act="bDur" data-v="${m}">${m} min</button>`).join("")}</div>
+    <button class="btn primary block" id="bStart" data-act="breathStart">Commencer</button></div>`);
+  if (opts.auto) later(breathStart, 600);
+}
+function breathStart(){
+  audioUnlock();
+  $("#bStart")?.remove(); $("#bDur")?.remove(); const seg = $("#bSeg"); if (seg) seg.style.visibility = "hidden";
+  const b = BREATHS[cur.b.key], end = Date.now() + cur.b.min * 60000, orb = $("#orb"), lab = $("#orbLabel"), left = $("#bLeft");
+  every(() => { const s = Math.max(0, Math.ceil((end - Date.now()) / 1000)); left.textContent = s > 0 ? `${Math.floor(s/60)}:${String(s % 60).padStart(2, "0")}` : "Dernière respiration…"; }, 500);
+  let i = 0;
+  const step = () => {
+    if (i === 0 && Date.now() >= end){ addStone(); return doneScreen("Ta respiration a ralenti. Reste là quelques secondes si tu veux, sans rien faire."); }
+    const [k, txt, d, sc] = b.phases[i];
+    lab.textContent = txt;
+    orb.style.transition = `transform ${d}s ${k.startsWith("hold") ? "linear" : "ease-in-out"}`;
+    orb.style.transform = `scale(${sc})`;
+    if (k === "in") tone(440, d + .4); else if (k === "out") tone(330, Math.min(d, 4));
+    i = (i + 1) % b.phases.length;
+    later(step, d * 1000);
+  };
+  step();
+}
+
+/* ---------- guidé : mains sur le cœur, relâchement ---------- */
+function openGuided(key, opts = {}){
+  cur.then = opts.then || null; cur.g = key;
+  const g = GUIDED[key];
+  openOv(`${head()}<div class="center"><h1>${g.title}</h1><p class="mut" style="margin-top:8px">${g.intro}</p>
+    <div class="guide-box"><p id="gText" class="guide-text">Installe-toi confortablement.</p><div class="bar"><i id="gBar"></i></div></div>
+    <button class="btn primary block" data-act="guidedStart">Commencer</button></div>`);
+}
+function guidedStart(btn){
+  btn.remove(); audioUnlock();
+  const g = GUIDED[cur.g]; let i = 0;
+  const run = () => {
+    if (i >= g.steps.length){ addStone(); return doneScreen(g.done); }
+    const s = g.steps[i++], el = $("#gText"), bar = $("#gBar");
+    el.classList.remove("in"); void el.offsetWidth; el.textContent = s.t; el.dataset.k = s.k || ""; el.classList.add("in");
+    bar.style.transition = "none"; bar.style.width = "0%"; void bar.offsetWidth;
+    bar.style.transition = `width ${s.s}s linear`; bar.style.width = "100%";
+    tone(s.k === "tense" ? 520 : 396, 1);
+    later(run, s.s * 1000);
+  };
+  run();
+}
+
+/* ---------- ancrage 5-4-3-2-1 ---------- */
+function openGround(opts = {}){ cur.then = opts.then || null; cur.gi = 0; cur.gc = 0; renderGround(); }
+function renderGround(){
+  const [n, t, h] = GROUND[cur.gi];
+  openOv(`${head()}<div class="center">
+    <div class="steps">${GROUND.map((_, i) => `<i class="${i <= cur.gi ? "on" : ""}"></i>`).join("")}</div>
+    <p class="big-n">${n}</p><h2>${t}</h2><p class="mut" style="margin-top:8px">${h}</p>
+    <div class="dots">${Array.from({length:n}, (_, i) => `<button class="dot" data-act="gTap" aria-label="J’en ai trouvé un"></button>`).join("")}</div>
+    <p class="mut small">Touche un rond à chaque fois que tu trouves.</p>
+    <button class="btn ${n === 0 ? "primary" : ""} block" id="gNext" data-act="gNext" style="margin-top:20px">${cur.gi < 4 ? "Suivant" : "Terminer"}</button></div>`);
+}
+function gTap(){
+  const d = $$(".dot").find(x => !x.classList.contains("on"));
+  if (d){ d.classList.add("on"); cur.gc++; }
+  if (cur.gc >= GROUND[cur.gi][0]) $("#gNext").classList.add("primary");
+}
+function gNext(){
+  cur.gi++; cur.gc = 0;
+  if (cur.gi >= GROUND.length){ addStone(); return doneScreen("Tu es revenue ici, dans ce moment. Ton système nerveux vient de recevoir un message clair : ici, ça va."); }
+  renderGround();
+}
+
+/* ---------- premiers secours sensoriels ---------- */
+function openAid(opts = {}){
+  cur.then = opts.then || null; cur.aid = [];
+  openOv(`${head()}<div class="ov-body"><h1>Baisser les stimulations</h1><p class="mut">Quand le seau déborde, la première chose à faire, c’est d’arrêter d’y verser de l’eau. Coche ce que tu peux faire maintenant.</p>
+    <div class="card" style="padding:6px 16px">${AID.map((a, i) => `<button class="check" data-act="aidTog" data-v="${i}"><span class="box"></span><span>${a}</span></button>`).join("")}</div>
+    <button class="btn primary block" data-act="aidDone">C’est fait</button></div>`);
+}
+
+/* ---------- météo intérieure ---------- */
+function openCheckin(w){
+  cur.ci = {weather:W[w] ? w : null, energy:null, emo:[], body:[]};
+  openOv(`${head()}<div class="ov-body">
+    <h1>Faire le point</h1>
+    <div><p class="label">Le ciel à l’intérieur</p><div class="wx-row">${Object.entries(W).map(([k, x]) => `<button class="wx ${cur.ci.weather === k ? "on" : ""}" data-act="tog" data-o="ci" data-k="weather" data-single="1" data-v="${k}" aria-label="${x.n}">${x.e}</button>`).join("")}</div></div>
+    <div><p class="label">Ton énergie</p><div class="chips" style="margin-top:8px">${[1,2,3,4,5].map(n => `<button class="chip" data-act="tog" data-o="ci" data-k="energy" data-single="1" data-v="${n}">${["Vide","Basse","Moyenne","Bonne","Pleine"][n-1]}</button>`).join("")}</div></div>
+    <div><p class="label">Les mots les plus justes</p><p class="mut tiny">Plus le mot est précis, plus l’émotion se pose.</p>
+      ${Object.entries(EMO).map(([g, list]) => `<div class="chip-group" style="margin-top:10px"><p class="tiny mut" style="margin-bottom:6px">${g}</p><div class="chips">${list.map(e => `<button class="chip" data-act="tog" data-o="ci" data-k="emo" data-v="${e}">${e}</button>`).join("")}</div></div>`).join("")}</div>
+    <div><p class="label">Dans ton corps</p><div class="chips" style="margin-top:8px">${BODY.map(e => `<button class="chip" data-act="tog" data-o="ci" data-k="body" data-v="${e}">${e}</button>`).join("")}</div></div>
+    <div class="field"><label for="ciDrain">Ce qui m’a vidée (facultatif)</label><textarea id="ciDrain" rows="2"></textarea></div>
+    <div class="field"><label for="ciFill">Ce qui m’a remplie (facultatif)</label><textarea id="ciFill" rows="2"></textarea></div>
+    <button class="btn primary block" data-act="ciSave">Noter</button></div>`);
+}
+function ciSave(){
+  const c = cur.ci;
+  if (!c.weather){ toast("Choisis d’abord la météo du moment"); return; }
+  S.checkins.unshift({id:uid(), ts:Date.now(), weather:c.weather, energy:c.energy ? +c.energy : null, emo:c.emo, body:c.body, drain:$("#ciDrain").value.trim(), fill:$("#ciFill").value.trim()});
+  addStone(); route = "meteo"; closeOv(); go("meteo");
+}
+
+/* ---------- carnet ---------- */
+function openJournal(pi, id){
+  const e = id ? S.journal.find(x => x.id === id) : null;
+  if (e) pi = e.pi;
+  const P = PROMPTS[pi] || PROMPTS[0];
+  cur.j = {pi, id:e ? e.id : null};
+  const txt = e ? e.text : (S.draft && S.draft.pi === pi ? S.draft.text : "");
+  openOv(`${head()}<div class="ov-body">
+    <h1>${P.t}</h1><p>${P.p}</p>
+    ${P.tag === "pennebaker" ? `<p class="help">Quinze à vingt minutes, c’est l’idéal, mais cinq suffisent. Des émotions peuvent monter sur le moment, c’est normal : prévois un petit moment doux après.</p>` : ""}
+    ${e ? `<p class="mut small">Écrit le ${fmtDay(e.ts)} à ${fmtTime(e.ts)}</p>` : `<div class="between"><div class="chips">${[0,5,10,15].map(m => `<button class="chip ${m === 0 ? "on" : ""}" data-act="jTimer" data-v="${m}">${m ? m + " min" : "Sans minuteur"}</button>`).join("")}</div></div><p class="mut small" id="jClock"></p>`}
+    <textarea id="jText" rows="12" placeholder="Écris ici…">${esc(txt)}</textarea>
+    <button class="btn primary block" data-act="jSave">${e ? "Enregistrer" : "Ranger dans mon carnet"}</button>
+    ${e ? `<button class="btn ghost block" data-act="jDel">Supprimer cette page</button>` : ""}
+    <p class="mut tiny">Cette page reste sur ton téléphone.</p></div>`);
+}
+function jTimer(btn){
+  $$("[data-act=jTimer]").forEach(b => b.classList.toggle("on", b === btn));
+  stopAll();
+  const m = +btn.dataset.v, clock = $("#jClock");
+  if (!m){ clock.textContent = ""; return; }
+  const end = Date.now() + m * 60000;
+  every(() => {
+    const s = Math.ceil((end - Date.now()) / 1000);
+    if (s <= 0){ clock.textContent = "Le temps est passé. Tu peux continuer, ou t’arrêter là."; stopAll(); return; }
+    clock.textContent = `${Math.floor(s/60)}:${String(s % 60).padStart(2, "0")}`;
+  }, 1000);
+}
+function jSave(){
+  const text = $("#jText").value.trim();
+  if (!text){ toast("La page est encore vide"); return; }
+  if (cur.j.id){ const e = S.journal.find(x => x.id === cur.j.id); if (e) e.text = text; save(); toast("Page enregistrée"); }
+  else { S.journal.unshift({id:uid(), ts:Date.now(), pi:cur.j.pi, text}); S.draft = null; addStone(); }
+  closeOv();
+}
+
+/* ---------- fait ou film ? ---------- */
+const TR_N = 6;
+function trNew(){ cur.tr = {i:0, sit:"", story:"", emo:[], before:60, traps:[], pro:"", con:"", alt:["","",""], friend:"", neo:"", after:40, act:null}; trRender(); }
+function trCollect(){
+  const t = cur.tr, v = id => { const el = $("#" + id); return el ? el.value : null; };
+  [["sit","trSit"],["story","trStory"],["pro","trPro"],["con","trCon"],["friend","trFriend"],["neo","trNeo"]].forEach(([k, id]) => { const x = v(id); if (x !== null) t[k] = x; });
+  [0,1,2].forEach(i => { const x = v("trAlt" + i); if (x !== null) t.alt[i] = x; });
+  const b = v("trBefore"); if (b !== null) t.before = +b;
+  const a = v("trAfter"); if (a !== null) t.after = +a;
+}
+function trRender(){
+  const t = cur.tr, chip = (k, val, label, single) => `<button class="chip ${(single ? t[k] === val : t[k].includes(val)) ? "on" : ""}" data-act="tog" data-o="tr" data-k="${k}" ${single ? 'data-single="1"' : ""} data-v="${esc(val)}">${label || esc(val)}</button>`;
+  let body = "";
+  if (t.i === 0) body = `<h1>Ce qui s’est passé, vraiment</h1><p class="mut">Seulement les faits : ce qu’une caméra aurait filmé. Pas d’intention, pas d’interprétation.</p>
+    <textarea id="trSit" rows="4" placeholder="Ex. : Elle a répondu « ok. » à mon long message.">${esc(t.sit)}</textarea>`;
+  if (t.i === 1) body = `<h1>Ce que mon cerveau me raconte</h1><p class="mut">L’histoire qu’il a construite autour. Écris-la telle quelle, sans te juger : il essaie de te protéger.</p>
+    <textarea id="trStory" rows="4" placeholder="Ex. : Elle est fâchée contre moi. J’ai dû dire un truc de travers.">${esc(t.story)}</textarea>`;
+  if (t.i === 2) body = `<h1>Ce que ça me fait</h1><div class="chips">${[...EMO["Agitées"], ...EMO["Lourdes"]].map(e => chip("emo", e)).join("")}</div>
+    <div class="card center"><p class="label">À quel point j’y crois et ça me remue, sur 100</p><p class="rangeval" id="trBv">${t.before}</p><input type="range" id="trBefore" min="0" max="100" step="5" value="${t.before}" data-out="trBv"></div>`;
+  if (t.i === 3) body = `<h1>Tu reconnais un piège ?</h1><p class="mut">Plusieurs, parfois. Ou aucun : c’est d’accord aussi.</p>
+    <div>${TRAPS.map(x => `<button class="trap ${t.traps.includes(x[0]) ? "on" : ""}" data-act="tog" data-o="tr" data-k="traps" data-v="${x[0]}"><b>${x[1]}</b><span>${x[3]}</span></button>`).join("")}</div>`;
+  if (t.i === 4) body = `<h1>On vérifie, en douceur</h1><p class="mut">Comme une enquêtrice bienveillante.</p>
+    <div class="field"><label for="trPro">Les faits qui vont dans le sens de l’histoire</label><textarea id="trPro" rows="2">${esc(t.pro)}</textarea></div>
+    <div class="field"><label for="trCon">Les faits qui ne vont pas dans ce sens</label><textarea id="trCon" rows="2">${esc(t.con)}</textarea></div>
+    <div class="field"><label>Trois autres explications possibles</label>
+      ${["Ex. : elle était occupée","Ex. : elle écrit toujours court par message","Une troisième…"].map((p, i) => `<input class="input" id="trAlt${i}" placeholder="${p}" value="${esc(t.alt[i])}" style="margin-top:${i ? 8 : 0}px">`).join("")}</div>
+    <div class="field"><label for="trFriend">Ce que je dirais à une amie qui vivrait ça</label><textarea id="trFriend" rows="2">${esc(t.friend)}</textarea></div>`;
+  if (t.i === 5) body = `<h1>Une pensée plus juste</h1><p class="mut">Pas forcément positive. Juste plus équilibrée, plus fidèle aux faits.</p>
+    <textarea id="trNeo" rows="3" placeholder="Ex. : Je ne sais pas encore ce qu’elle ressent. Elle répond souvent court, et je peux lui demander.">${esc(t.neo)}</textarea>
+    <div class="card center"><p class="label">Et maintenant, sur 100 ?</p><p class="rangeval" id="trAv">${t.after}</p><input type="range" id="trAfter" min="0" max="100" step="5" value="${t.after}" data-out="trAv"></div>
+    <div><p class="label">Et si je faisais…</p><div class="chips" style="margin-top:8px">${["Vérifier gentiment, en posant la question","Laisser passer","En parler à quelqu’un","Prendre soin de moi d’abord"].map(a => chip("act", a, null, true)).join("")}</div></div>`;
+  openOv(`${head(t.i ? "trPrev" : "")}<div class="ov-body">
+    <div class="steps">${Array.from({length:TR_N}, (_, i) => `<i class="${i <= t.i ? "on" : ""}"></i>`).join("")}</div>
+    ${body}
+    <button class="btn primary block" data-act="${t.i < TR_N - 1 ? "trNext" : "trSave"}">${t.i < TR_N - 1 ? "Suivant" : "Ranger ce fil"}</button></div>`);
+}
+function trNext(){ trCollect(); const t = cur.tr;
+  if (t.i === 0 && !t.sit.trim()){ toast("Écris juste les faits, même en trois mots"); return; }
+  if (t.i === 1 && !t.story.trim()){ toast("Écris l’histoire, telle qu’elle vient"); return; }
+  t.i++; trRender(); }
+function trPrev(){ trCollect(); cur.tr.i = Math.max(0, cur.tr.i - 1); trRender(); }
+function trSave(){
+  trCollect(); const t = cur.tr;
+  S.thoughts.unshift({id:uid(), ts:Date.now(), sit:t.sit.trim(), story:t.story.trim(), emo:t.emo, before:t.before, traps:t.traps, pro:t.pro.trim(), con:t.con.trim(), alt:t.alt.map(a => a.trim()).filter(Boolean), friend:t.friend.trim(), neo:t.neo.trim(), after:t.after, act:t.act});
+  addStone();
+  const diff = t.before - t.after;
+  doneScreen(diff > 0 ? `De ${t.before} à ${t.after}. Ton cerveau voulait te protéger ; tu viens de lui montrer le reste de l’image.` : "Le nœud est encore là, et c’est d’accord. L’avoir regardé en face, c’est déjà le desserrer.");
+}
+function trView(id){
+  const t = S.thoughts.find(x => x.id === id); if (!t) return;
+  const traps = t.traps.map(k => TRAPS.find(x => x[0] === k)?.[1]).filter(Boolean);
+  const blk = (l, v) => v ? `<div><p class="label">${l}</p><p>${esc(v)}</p></div>` : "";
+  openOv(`${head()}<div class="ov-body"><p class="mut small">${fmtDay(t.ts)}</p><h1>${t.before} → ${t.after}</h1>
+    ${blk("Les faits", t.sit)}${blk("L’histoire de mon cerveau", t.story)}
+    ${t.emo.length ? `<div class="tags">${t.emo.map(e => `<i>${esc(e)}</i>`).join("")}</div>` : ""}
+    ${traps.length ? blk("Pièges repérés", traps.join(", ")) : ""}
+    ${blk("Ce qui va dans ce sens", t.pro)}${blk("Ce qui ne va pas dans ce sens", t.con)}
+    ${t.alt.length ? blk("Autres explications", t.alt.join(" / ")) : ""}${blk("Ce que je dirais à une amie", t.friend)}
+    ${blk("Une pensée plus juste", t.neo)}${blk("Ce que j’ai choisi", t.act)}
+    <button class="btn ghost block" data-act="trDel" data-id="${t.id}">Supprimer ce fil</button></div>`);
+}
+
+/* ---------- petits bateaux ---------- */
+function openBoats(){
+  cur.boated = false;
+  openOv(`${head()}<div class="ov-body"><h1>Les petits bateaux</h1>
+    <p class="mut">Écris une pensée qui tourne. Tu ne cherches pas à la chasser ni à la croire : tu la regardes passer, comme un bateau sur le lac.</p>
+    <div class="lake-scene" id="lakeScene">${lakeBg()}</div>
+    <textarea id="boatIn" rows="2" placeholder="Ex. : Je vais encore tout rater demain."></textarea>
+    <button class="btn primary block" data-act="boat">Poser sur un bateau</button>
+    <p class="mut small">Tu peux en poser autant que tu veux. Si la même pensée revient, pose-la à nouveau : c’est l’exercice.</p></div>`);
+}
+function launchBoat(){
+  const inp = $("#boatIn"), txt = inp.value.trim();
+  if (!txt){ inp.focus(); return; }
+  const scene = $("#lakeScene"), el = document.createElement("div");
+  el.className = "boat";
+  el.style.top = (44 + Math.random() * 30) + "%";
+  el.innerHTML = `<div class="sail">Je remarque que mon cerveau me dit : « ${esc(txt)} »</div><svg viewBox="0 0 70 20"><path d="M2 4 H68 L58 18 H12 Z" fill="#8A6A52"/><path d="M10 4h50" stroke="#6B503D" stroke-width="2"/></svg>`;
+  el.addEventListener("animationend", e => { if (e.target === el) el.remove(); });
+  scene.appendChild(el);
+  inp.value = "";
+  if (!cur.boated){ cur.boated = true; addStone(); }
+}
+
+/* ---------- boîte à soucis ---------- */
+function wOpen(id){
+  const w = S.worries.find(x => x.id === id); if (!w) return;
+  cur.w = id;
+  openOv(`${head()}<div class="ov-body"><p class="label">Le souci</p><p class="quote" style="font-size:20px">${esc(w.text)}</p>
+    <h2>Alors, c’est arrivé ?</h2>
+    <button class="btn block" data-act="wOut" data-v="non">Non</button>
+    <button class="btn block" data-act="wOut" data-v="partiel">En partie</button>
+    <button class="btn block" data-act="wOut" data-v="oui">Oui</button>
+    <button class="btn ghost block" data-act="wDel">Retirer ce souci de la boîte</button></div>`);
+}
+function wOut(v){
+  const w = S.worries.find(x => x.id === cur.w); if (!w) return;
+  if (v === "non"){ w.out = "non"; w.at = Date.now(); addStone(); return doneScreen("Il n’est pas arrivé. Ton cerveau t’a protégée d’un danger qui n’est pas venu. Tu peux le remercier, et le laisser se reposer."); }
+  w.out = v;
+  openOv(`${head()}<div class="ov-body"><h1>Et c’était…</h1>
+    ${[["moins","Moins dur que ce que j’imaginais"],["pareil","Aussi dur que prévu"],["plus","Plus dur que prévu"]].map(([k, l]) => `<button class="btn block" data-act="wSev" data-v="${k}">${l}</button>`).join("")}</div>`);
+}
+function wSev(v){
+  const w = S.worries.find(x => x.id === cur.w); if (!w) return;
+  w.sev = v; w.at = Date.now(); addStone();
+  doneScreen(v === "moins" ? "Moins dur que prévu : ton imagination avait pris de l’avance. Tu l’as traversé." : "Tu l’as traversé. Ça mérite un vrai moment de douceur ce soir, tu ne trouves pas ?");
+}
+
+/* ---------- autocompassion ---------- */
+function openSelfComp(opts = {}){ cur.then = opts.then || null; cur.sc = 0; scRender(); }
+function scRender(){
+  const s = SELFCOMP[cur.sc];
+  openOv(`${head()}<div class="ov-body"><div class="steps">${SELFCOMP.map((_, i) => `<i class="${i <= cur.sc ? "on" : ""}"></i>`).join("")}</div>
+    <h1>La pause d’autocompassion</h1>${s.h ? `<p class="label">${s.h}</p>` : ""}
+    <p class="guide-text in">${s.t}</p>
+    ${s.input ? `<textarea id="scWords" rows="3" placeholder="Ex. : Tu as le droit d’être fatiguée. Tu fais déjà beaucoup."></textarea>` : ""}
+    <button class="btn primary block" data-act="scNext">${cur.sc < SELFCOMP.length - 1 ? "Suivant" : "Terminer"}</button>
+    <p class="src">D’après la « Self-Compassion Break » de Kristin Neff.</p></div>`);
+}
+function scNext(){
+  const w = $("#scWords"); if (w && w.value.trim()) { S.kindWords.unshift({ts:Date.now(), text:w.value.trim()}); save(); }
+  cur.sc++;
+  if (cur.sc >= SELFCOMP.length){ addStone(); return doneScreen("Tu viens de t’offrir ce que tu offres si facilement aux autres."); }
+  scRender();
+}
+
+/* ---------- réglages ---------- */
+function openSettings(){
+  openOv(`${head()}<div class="ov-body"><h1>Réglages</h1>
+    <div class="field"><label for="nameIn">Ton prénom</label><input class="input" id="nameIn" value="${esc(S.name)}" maxlength="30"></div>
+    <div class="card" style="padding:4px 18px">
+      <div class="set-row"><div><b>Apparence</b><p class="mut tiny">Le mode nuit est plus doux pour les yeux le soir.</p></div></div>
+      <div class="seg" style="margin-bottom:14px">${[["auto","Auto"],["light","Jour"],["dark","Nuit"]].map(([k, l]) => `<button class="${S.theme === k ? "on" : ""}" data-act="setTheme" data-v="${k}">${l}</button>`).join("")}</div>
+      <div class="set-row"><div><b>Mode très doux</b><p class="mut tiny">Moins d’animations, couleurs plus calmes.</p></div><button class="switch" data-act="setToggle" data-v="soft" aria-pressed="${S.soft}" aria-label="Mode très doux"></button></div>
+      <div class="set-row"><div><b>Sons pour respirer</b><p class="mut tiny">Une note douce à chaque inspiration et expiration, pour fermer les yeux.</p></div><button class="switch" data-act="setToggle" data-v="sound" aria-pressed="${S.sound}" aria-label="Sons pour respirer"></button></div>
+    </div>
+    <div class="card"><h2>Tes données</h2><p class="mut small">Tout reste sur ce téléphone : rien n’est envoyé nulle part. Si tu effaces les données de Safari ou désinstalles l’app, tout disparaît. Pense à faire une sauvegarde de temps en temps.</p>
+      <div class="row"><button class="btn" data-act="exportData">Sauvegarder</button><button class="btn" data-act="importData">Restaurer</button></div>
+      <input type="file" id="importIn" accept="application/json,.json" hidden>
+      <button class="link" data-act="resetAll" style="margin-top:8px">Tout effacer</button></div>
+    <p class="mut tiny center">Rive, fait avec beaucoup de tendresse. ${S.stones} galet${S.stones > 1 ? "s" : ""} posé${S.stones > 1 ? "s" : ""} jusqu’ici.</p></div>`);
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `rive-sauvegarde-${dayKey()}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("Sauvegarde créée");
+}
+
+/* ---------- accueil la première fois ---------- */
+function welcome(){
+  openOv(`<div class="center" style="padding-top:20px"><div class="hero-ill">${heroSVG()}</div>
+    <h1 style="margin-top:20px">Bienvenue ${esc(S.name)}</h1>
+    <p style="margin-top:12px">Rive est un petit coin calme, rien que pour toi. Pas de compte, pas de pub, rien ne sort de ton téléphone.</p>
+    <p class="mut" style="margin-top:12px">Quand ça déborde, il y a le bouton SOS, toujours en haut. Le reste du temps, promène-toi à ton rythme : chaque moment pris pour toi pose un galet sur ton cairn.</p>
+    <button class="btn primary block" data-act="welcomeOk" style="margin-top:28px">Entrer</button></div>`);
+}
+
+/* ---------- actions ---------- */
+const ACT = {
+  go: t => go(t.dataset.v),
+  close: () => closeOv(),
+  exDone: () => exDone(),
+  sos: () => sosStart(),
+  sosBreath: () => { readSosBefore(); openBreath("soupir", {auto:true, minutes:1, then:sosMenu}); },
+  sosMenu: () => { readSosBefore(); sosMenu(); },
+  sosEx: t => { const o = {then:sosMenu}; ({breath:() => openBreath("soupir", {...o, minutes:1, auto:true}), ground:() => openGround(o), aid:() => openAid(o), pmr:() => openGuided("pmr", o), heart:() => openGuided("heart", o)})[t.dataset.v](); },
+  sosEnd: () => sosEnd(),
+  sosSave: () => sosSave(),
+  breath: t => openBreath(t.dataset.v || "soupir"),
+  bType: t => openBreath(t.dataset.v, {then:cur.then, minutes:cur.b?.min}),
+  bDur: t => { cur.b.min = +t.dataset.v; $$("[data-act=bDur]").forEach(b => b.classList.toggle("on", b === t)); },
+  breathStart: () => breathStart(),
+  heart: () => openGuided("heart"),
+  pmr: () => openGuided("pmr"),
+  guidedStart: t => guidedStart(t),
+  gTap: () => gTap(),
+  gNext: () => gNext(),
+  aidTog: t => { t.classList.toggle("on"); },
+  aidDone: () => { if ($$(".check.on").length){ addStone(); doneScreen("Moins de lumière, moins de bruit, moins de monde : tu viens de vider un peu le seau. C’est exactement ce qu’il fallait."); } else exDone(); },
+  ciNew: t => openCheckin(t.dataset.v),
+  ciSave: () => ciSave(),
+  tog: t => {
+    const o = cur[t.dataset.o], k = t.dataset.k, v = t.dataset.v; if (!o) return;
+    if (t.dataset.single){
+      o[k] = o[k] === v ? null : v;
+      $$(`[data-act=tog][data-o="${t.dataset.o}"][data-k="${k}"]`).forEach(b => b.classList.toggle("on", b === t && o[k] === v));
+    } else {
+      const i = o[k].indexOf(v); if (i >= 0) o[k].splice(i, 1); else o[k].push(v);
+      t.classList.toggle("on", i < 0);
+    }
+  },
+  journal: t => openJournal(+t.dataset.v || 0),
+  jOpen: t => openJournal(0, t.dataset.id),
+  jTimer: t => jTimer(t),
+  jSave: () => jSave(),
+  jDel: () => { if (confirm("Supprimer cette page ?")){ S.journal = S.journal.filter(x => x.id !== cur.j.id); save(); closeOv(); } },
+  trNew: () => trNew(),
+  trNext: () => trNext(),
+  trPrev: () => trPrev(),
+  trSave: () => trSave(),
+  trView: t => trView(t.dataset.id),
+  trDel: t => { if (confirm("Supprimer ce fil ?")){ S.thoughts = S.thoughts.filter(x => x.id !== t.dataset.id); save(); closeOv(); } },
+  boats: () => openBoats(),
+  boat: () => launchBoat(),
+  wAdd: () => {
+    const t = $("#wText").value.trim(); if (!t){ $("#wText").focus(); return; }
+    S.worries.unshift({id:uid(), ts:Date.now(), text:t, due:$("#wDate").value || null, out:null});
+    save(); render(); toast("Rangé dans la boîte. Tu peux le laisser là."); $("#box")?.scrollIntoView({block:"start"});
+  },
+  wOpen: t => wOpen(t.dataset.id),
+  wOut: t => wOut(t.dataset.v),
+  wSev: t => wSev(t.dataset.v),
+  wDel: () => { S.worries = S.worries.filter(x => x.id !== cur.w); save(); closeOv(); },
+  selfcomp: () => openSelfComp(),
+  scNext: () => scNext(),
+  drawCard: () => { let n; do { n = Math.floor(Math.random() * CARDS.length); } while (n === cur.card && CARDS.length > 1); cur.card = n; const el = $("#cardTxt"); el.textContent = CARDS[n]; el.classList.remove("in"); void el.offsetWidth; },
+  perm: t => { const v = t.dataset.v, l = S.perms.list, i = l.indexOf(v); if (i >= 0) l.splice(i, 1); else l.push(v); t.classList.toggle("on", i < 0); save(); },
+  kitAdd: () => { const i = $("#kitIn"), v = i.value.trim(); if (!v) return; S.kit.push(v); save(); render(); },
+  kitDel: t => { S.kit.splice(+t.dataset.v, 1); save(); render(); },
+  settings: () => openSettings(),
+  setTheme: t => { S.theme = t.dataset.v; save(); applyTheme(); $$("[data-act=setTheme]").forEach(b => b.classList.toggle("on", b === t)); },
+  setToggle: t => { const k = t.dataset.v; S[k] = !S[k]; save(); t.setAttribute("aria-pressed", S[k]); applyTheme(); if (k === "sound" && S.sound){ audioUnlock(); tone(440, 1.2); } },
+  exportData: () => exportData(),
+  importData: () => $("#importIn").click(),
+  resetAll: () => { if (confirm("Tout effacer ? Ton carnet, tes relevés et ton cairn disparaîtront de ce téléphone.")){ const n = S.name; S = defaults(); S.name = n; S.welcomed = true; save(); applyTheme(); closeOv(); toast("Tout a été effacé"); } },
+  hideTip: () => { S.tipHidden = true; save(); render(); },
+  welcomeOk: () => { S.welcomed = true; save(); closeOv(); }
+};
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-act]"); if (!t) return;
+  const f = ACT[t.dataset.act]; if (!f) return;
+  e.preventDefault(); f(t, e);
+});
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.out){ const o = $("#" + t.dataset.out); if (o) o.textContent = t.value; }
+  if (t.id === "jText" && cur.j && !cur.j.id){ S.draft = {pi:cur.j.pi, text:t.value}; saveSoon(); }
+  if (t.id === "nameIn"){ S.name = t.value.trim() || "toi"; saveSoon(); }
+});
+document.addEventListener("change", e => {
+  if (e.target.id !== "importIn" || !e.target.files[0]) return;
+  const r = new FileReader();
+  r.onload = () => { try { const d = JSON.parse(r.result); if (typeof d !== "object" || !Array.isArray(d.checkins)) throw 0; S = Object.assign(defaults(), d); save(); applyTheme(); closeOv(); toast("Sauvegarde restaurée"); } catch(err) { toast("Ce fichier n’est pas une sauvegarde de Rive"); } };
+  r.readAsText(e.target.files[0]);
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && ov.classList.contains("show")) closeOv();
+  if (e.key === "Enter" && e.target.id === "kitIn") ACT.kitAdd();
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", applyTheme);
+
+/* ---------- démarrage ---------- */
+applyTheme();
+go((location.hash || "#home").slice(1));
+if (!S.welcomed) welcome();
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
