@@ -6,9 +6,9 @@ Pas de compte, pas de serveur, pas de pub. Tout reste dans le téléphone (stock
 
 ## Mettre en ligne sur GitHub Pages
 
-1. Crée un dépôt (par exemple `rive`) et dépose-y tout le contenu de ce dossier, à la racine : `index.html`, `manifest.webmanifest`, `sw.js`, `icons/`.
+1. Crée un dépôt (ici `hypersensible`) et dépose-y tout le contenu de ce dossier, à la racine : `index.html`, `manifest.webmanifest`, `sw.js`, `icons/`.
 2. Dans le dépôt : **Settings → Pages → Build and deployment → Source : Deploy from a branch**, branche `main`, dossier `/ (root)`, puis **Save**.
-3. Au bout d'une minute, l'app est en ligne sur `https://<ton-pseudo>.github.io/rive/`.
+3. Au bout d'une minute, l'app est en ligne sur `https://lpmnakha.github.io/hypersensible/`.
 
 ## L'installer sur l'iPhone
 

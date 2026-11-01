@@ -253,6 +253,10 @@ details.acc li+li{margin-top:6px}
 .set-row:first-child{border-top:0}
 .set-row>div{flex:1}
 
+.advice{border-left:3px solid var(--glacier);padding:2px 0 2px 14px;font-size:16px;margin-top:12px}
+.advice.alert,.advice.hard{border-color:var(--dusk)}
+.advice.up{border-color:var(--sage)}
+[id]{scroll-margin-top:76px}
 .help{background:var(--soft);border-radius:var(--r-md);padding:14px 16px;font-size:15px}
 .help b{font-weight:800}
 
@@ -311,7 +315,7 @@ const dayIndex = () => Math.floor((Date.now() - new Date().getTimezoneOffset()*6
 const KEY = "rive.v1";
 const KIT_DEFAULT = ["Un footing tranquille au bord du lac","Une douche chaude, lumière tamisée","Un plaid et une boisson chaude","Une playlist douce que je connais par cœur","Un message à quelqu’un qui me fait du bien","Dix minutes sans écran, fenêtre ouverte"];
 function defaults(){ return {v:1, name:"Mélina", theme:"auto", soft:false, sound:false, welcomed:false, tipHidden:false,
-  stones:0, checkins:[], journal:[], thoughts:[], worries:[], sos:[], kindWords:[], kit:KIT_DEFAULT.slice(), perms:{day:"", list:[]}, draft:null}; }
+  stones:0, path:null, checkins:[], journal:[], thoughts:[], worries:[], sos:[], kindWords:[], kit:KIT_DEFAULT.slice(), perms:{day:"", list:[]}, draft:null}; }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch(e) {}
 let saveT;
@@ -456,7 +460,15 @@ function applyTheme(){
 /* ---------- toast, galets ---------- */
 let toastT;
 function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2800); }
-function addStone(){ S.stones++; save(); setTimeout(() => toast("Un galet de plus sur ton cairn"), 300); }
+function addStone(){
+  S.stones++;
+  let msg = "Un galet de plus sur ton cairn";
+  if (cur.pathStep != null && S.path && !S.path.done[cur.pathStep]){
+    S.path.done[cur.pathStep] = true;
+    msg = S.path.done.every(Boolean) ? "Parcours terminé. Tu peux être fière de toi" : "Étape du parcours faite, et un galet de plus";
+  }
+  cur.pathStep = null; save(); setTimeout(() => toast(msg), 300);
+}
 
 /* ---------- overlay ---------- */
 const ov = $("#overlay");
@@ -467,7 +479,7 @@ function later(fn, ms){ const id = setTimeout(fn, ms); cleanup.push(() => clearT
 function every(fn, ms){ const id = setInterval(fn, ms); cleanup.push(() => clearInterval(id)); return id; }
 function head(back){ return `<div class="ov-head">${back ? `<button class="icon-btn" data-act="${back}" aria-label="Retour">${ICON.back}</button>` : "<span></span>"}<button class="icon-btn" data-act="close" aria-label="Fermer">${ICON.x}</button></div>`; }
 function openOv(html){ stopAll(); ov.innerHTML = `<div class="ov-in">${html}</div>`; ov.classList.add("show"); ov.scrollTop = 0; document.body.classList.add("locked"); }
-function closeOv(){ stopAll(); cur.then = null; ov.classList.remove("show"); ov.innerHTML = ""; document.body.classList.remove("locked"); render(); }
+function closeOv(){ stopAll(); cur.then = null; cur.pathStep = null; ov.classList.remove("show"); ov.innerHTML = ""; document.body.classList.remove("locked"); render(); }
 function doneScreen(msg){
   const next = cur.then ? "Continuer" : "Revenir";
   openOv(`${head()}<div class="center">${stoneSVG}<p class="done-msg">${msg}</p><button class="btn primary block" data-act="exDone">${next}</button></div>`);
@@ -523,7 +535,8 @@ const VIEWS = {
     const h = new Date().getHours();
     const hello = h < 5 ? "Douce nuit" : h < 12 ? "Bonjour" : h < 18 ? "Coucou" : "Bonsoir";
     const today = lastCheckin(dayKey());
-    const d = DAILY[dayIndex() % DAILY.length];
+    let d = DAILY[dayIndex() % DAILY.length], dLabel = "Pour aujourd’hui";
+    if (S.path && stepIndex() >= 0){ const T = THEMES[S.path.theme], i = stepIndex(), st = T.steps[i]; d = {t:st.t, d:st.d + (st.defi ? " Petit défi : " + st.defi : ""), a:"pathGo", v:String(i), b:"Commencer"}; dLabel = `${T.name}, étape ${i + 1} sur 7`; }
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     const standalone = window.navigator.standalone || matchMedia("(display-mode: standalone)").matches;
     const tip = (isIOS && !standalone && !S.tipHidden) ? `<section class="help"><p><b>Pour l’avoir comme une vraie app :</b> touche le bouton Partager de Safari, puis « Sur l’écran d’accueil ». Tes notes y sont mieux protégées.</p><p style="margin-top:8px"><button class="link" data-act="hideTip">C’est fait</button></p></section>` : "";
@@ -540,7 +553,7 @@ const VIEWS = {
       <div class="wx-row">${Object.entries(W).map(([k, w]) => `<button class="wx" data-act="ciNew" data-v="${k}" aria-label="${w.n}">${w.e}</button>`).join("")}</div>
     </section>
     <section class="card">
-      <p class="label">Pour aujourd’hui</p>
+      <p class="label">${dLabel}</p>
       <h2>${d.t}</h2>
       <p class="mut small">${d.d}</p>
       <div><button class="btn primary" data-act="${d.a}" ${d.v ? `data-v="${d.v}"` : ""}>${d.b}</button></div>
@@ -567,7 +580,10 @@ const VIEWS = {
     return `
     <section><h1>Ta météo intérieure</h1><p class="mut" style="margin-top:6px">Noter ce que tu ressens, avec des mots précis, aide ton cerveau à baisser le volume de l’alarme.</p></section>
     <section><button class="btn primary block" data-act="ciNew">Faire le point maintenant</button></section>
-    <section class="card"><h2>Tes quatorze derniers jours</h2><div class="strip">${strip}</div></section>
+    <section class="card" id="path"><div class="between"><h2>Ton parcours</h2>${S.path ? `<button class="link" data-act="pathAll">Tout voir</button>` : ""}</div>${pathBlock(false)}</section>
+    <section class="card"><h2>Tes quatorze derniers jours</h2><div class="strip">${strip}</div>
+      ${(() => { const tr = trends(); return tr.length ? `<div style="margin-top:14px">${tr.map(t => `<p class="advice ${t.k}">${esc(t.t)}</p>`).join("")}</div>` : ""; })()}
+      ${S.checkins[0] && dayKey(S.checkins[0].ts) === dayKey() ? `<button class="link" data-act="planLast">Revoir ma feuille de route du jour</button>` : ""}</section>
     ${entries ? `<section class="card"><h2>Tes derniers relevés</h2><div>${entries}</div></section>` : ""}
     <section><h2>Ton carnet</h2><p class="mut small" style="margin-top:4px">Choisis une invitation à écrire.</p></section>
     <section class="tools" style="margin-top:12px">${PROMPTS.map((p, i) => `<button class="tool" data-act="journal" data-v="${i}"><div><b>${p.t}</b><span>${esc(p.p.length > 90 ? p.p.slice(0, 88) + "…" : p.p)}</span></div><span class="chev">${ICON.chev}</span></button>`).join("")}</section>
@@ -599,7 +615,7 @@ const VIEWS = {
       <p class="small">Dans une étude de Penn State, des personnes très anxieuses ont noté leurs soucis pendant dix jours, puis vérifié ce qui s’était réellement passé : environ 91 % ne se sont jamais produits. Et plus elles le constataient, plus leur inquiétude baissait.</p>
       <p class="small">Astuce : choisis un « moment des soucis » de quinze minutes dans la journée. Quand un souci arrive en dehors, note-le ici et dis-toi « je m’en occupe à 18 h ». Souvent, à 18 h, il a perdu de sa force.</p>
       <p class="src">LaFreniere & Newman, Behavior Therapy, 2020.</p></div></details>
-    <section><h2>Les pièges de pensée</h2><p class="mut small" style="margin-top:4px">Tout le monde y tombe. Les reconnaître, c’est déjà en sortir à moitié.</p></section>
+    <section id="traps"><h2>Les pièges de pensée</h2><p class="mut small" style="margin-top:4px">Tout le monde y tombe. Les reconnaître, c’est déjà en sortir à moitié.</p></section>
     ${TRAPS.map(t => `<details class="acc"><summary>${t[1]}</summary><div class="acc-b"><p class="small">${t[2]}</p><p class="small mut">${t[3]}</p></div></details>`).join("")}
     ${threads ? `<section><h2>Tes fils démêlés</h2></section><section class="tools" style="margin-top:12px">${threads}</section>` : ""}`;
   },
@@ -623,7 +639,7 @@ const VIEWS = {
       <div class="chips">${PERMS.map(p => `<button class="chip ${S.perms.list.includes(p) ? "on" : ""}" data-act="perm" data-v="${esc(p)}">${p}</button>`).join("")}</div>
       <p class="mut tiny">Ces permissions se remettent à zéro chaque jour.</p>
     </section>
-    <section class="card">
+    <section class="card" id="kit">
       <h2>Mon kit doux</h2>
       <p class="mut small">Ce qui te recharge, à garder sous la main pour les jours gris.</p>
       <div>${S.kit.map((k, i) => `<div class="between entry"><span>${esc(k)}</span><button class="icon-btn" data-act="kitDel" data-v="${i}" aria-label="Retirer">${ICON.x}</button></div>`).join("")}</div>
@@ -688,6 +704,182 @@ function go(r){
   $$(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.v === r));
   render(); window.scrollTo(0, 0);
   try { history.replaceState(null, "", "#" + r); } catch(e) {}
+}
+
+/* ---------- feuille de route : exercices, parcours, tendances ---------- */
+function goTo(r, id){ closeOv(); go(r); if (id) setTimeout(() => document.getElementById(id)?.scrollIntoView({behavior:"smooth", block:"start"}), 60); }
+const EX = {
+  soupir:{i:"🌬️", t:"Soupir cyclique", d:"Une à trois minutes pour calmer le corps.", run:o => openBreath("soupir", o)},
+  longue:{i:"🌙", t:"Expiration longue", d:"Inspirer sur 4, expirer sur 6. Parfait le soir.", run:o => openBreath("longue", o)},
+  ground:{i:"🪨", t:"Ancrage 5-4-3-2-1", d:"Revenir ici avec tes cinq sens.", run:o => openGround(o)},
+  aid:{i:"🕯️", t:"Baisser les stimulations", d:"Lumière, bruit, monde : on vide le seau.", run:o => openAid(o)},
+  pmr:{i:"🧘", t:"Relâcher le corps", d:"Contracter, relâcher, en une minute et demie.", run:o => openGuided("pmr", o)},
+  heart:{i:"🤲", t:"Mains sur le cœur", d:"Une minute de chaleur.", run:o => openGuided("heart", o)},
+  selfcomp:{i:"🌿", t:"La pause d’autocompassion", d:"Te parler comme à une amie.", run:o => openSelfComp(o)},
+  boats:{i:"⛵", t:"Les petits bateaux", d:"Regarder une pensée passer sans la suivre.", run:() => openBoats()},
+  tr:{i:"🧶", t:"Fait ou film ?", d:"Séparer les faits de l’histoire.", run:() => trNew()},
+  worry:{i:"📦", t:"La boîte à soucis", d:"Ranger un « et si » pour le vérifier plus tard.", run:() => goTo("demeler", "box")},
+  traps:{i:"🔎", t:"Les pièges de pensée", d:"Lire les dix pièges, puis en repérer un aujourd’hui.", run:() => goTo("demeler", "traps")},
+  kit:{i:"🧺", t:"Ton kit doux", d:"Noter ce qui te recharge.", run:() => goTo("douceur", "kit")}
+};
+PROMPTS.forEach((p, i) => { EX["j" + i] = {i:"✍️", t:p.t, d:p.p.length > 80 ? p.p.slice(0, p.p.lastIndexOf(" ", 78)) + "…" : p.p, run:() => openJournal(i)}; });
+
+const THEMES = {
+  recharge:{i:"🔋", name:"Recharger les batteries", intro:"Ton énergie est basse ces jours-ci. Ce parcours t’aide à vider le seau et à protéger tes réserves.", steps:[
+    {t:"Repérer ce qui vide et ce qui remplit", d:"Avant de changer quoi que ce soit, on observe.", ex:"j1"},
+    {t:"Baisser les stimulations", d:"Retirer de l’eau du seau, concrètement.", ex:"aid", defi:"Une heure sans notifications aujourd’hui."},
+    {t:"Respirer pour mieux dormir", d:"Le sommeil est ta première recharge.", ex:"longue", defi:"Écrans coupés trente minutes avant de dormir."},
+    {t:"Une limite minuscule", d:"Protéger ton énergie, c’est aussi savoir dire « pas maintenant ».", ex:"j4", defi:"Dire une fois « je te redis » au lieu de « oui » tout de suite."},
+    {t:"Remplir ton kit doux", d:"Avoir sous la main ce qui recharge, pour ne pas avoir à y réfléchir quand tu es vidée.", ex:"kit", defi:"Faire une chose de ton kit aujourd’hui."},
+    {t:"Relâcher le corps", d:"La fatigue se loge aussi dans les muscles.", ex:"pmr"},
+    {t:"Ton plan anti-débordement", d:"Écris deux signes qui montrent que ton seau monte, et une action pour chacun.", ex:"j3"}]},
+  apaiser:{i:"🌬️", name:"Calmer l’alarme", intro:"Ton système d’alarme s’allume souvent ces jours-ci. Ce parcours entraîne le corps puis l’esprit à redescendre.", steps:[
+    {t:"Soupir cyclique, trois minutes", d:"La base de tout le parcours : allonger l’expiration.", ex:"soupir", defi:"Le refaire une fois dans la journée, même une minute."},
+    {t:"Ancrage 5-4-3-2-1", d:"Revenir au présent quand la tête part en avant.", ex:"ground"},
+    {t:"La boîte à soucis", d:"Ranger un « et si » au lieu de le ruminer.", ex:"worry", defi:"Choisir un moment des soucis de quinze minutes, à heure fixe."},
+    {t:"Les petits bateaux", d:"Regarder une pensée inquiète au lieu de regarder à travers elle.", ex:"boats"},
+    {t:"Relâcher le corps", d:"L’anxiété crispe ; le corps peut apprendre à lâcher.", ex:"pmr"},
+    {t:"Fait ou film ?", d:"Mettre une inquiétude à l’épreuve des faits.", ex:"tr"},
+    {t:"Vérifier la boîte", d:"Regarde ce que sont devenus tes soucis. Combien se sont vraiment produits ?", ex:"worry", defi:"Finir par un soupir cyclique d’une minute."}]},
+  demeler:{i:"🧶", name:"Démêler les histoires", intro:"Ton cerveau te raconte beaucoup d’histoires en ce moment. Ce parcours t’aide à les repérer et à les desserrer, sans te juger.", steps:[
+    {t:"Connaître les pièges", d:"Les reconnaître, c’est déjà en sortir à moitié.", ex:"traps", defi:"Repérer un piège dans ta journée, juste le nommer, sans le combattre."},
+    {t:"Fait ou film ?", d:"Séparer ce qui s’est passé de ce que ton cerveau en a fait.", ex:"tr"},
+    {t:"Les petits bateaux", d:"Laisser passer une pensée qui insiste.", ex:"boats"},
+    {t:"La lettre d’une amie", d:"Le regard d’une amie est souvent plus juste que le tien sur toi.", ex:"j7"},
+    {t:"Vérifier gentiment", d:"Un deuxième « Fait ou film ? », puis une petite action.", ex:"tr", defi:"Poser une vraie question à quelqu’un au lieu de deviner sa réponse."},
+    {t:"Écriture libre", d:"Vider ce qui reste emmêlé.", ex:"j0"},
+    {t:"La pause d’autocompassion", d:"Finir le parcours en douceur avec toi-même.", ex:"selfcomp"}]},
+  douceur:{i:"🤲", name:"Se réconforter", intro:"C’est une période plus triste ou plus seule. Ce parcours t’accompagne avec douceur, et un peu de lien.", steps:[
+    {t:"Mains sur le cœur", d:"Commencer par la chaleur.", ex:"heart"},
+    {t:"Écriture libre", d:"Laisser sortir ce qui pèse, sans filtre.", ex:"j0"},
+    {t:"La pause d’autocompassion", d:"Accueillir la peine sans la juger.", ex:"selfcomp", defi:"Envoyer un message à quelqu’un qui te fait du bien."},
+    {t:"Ce que je n’ose pas dire", d:"Mettre des mots sur ce qui reste à l’intérieur.", ex:"j5"},
+    {t:"La lettre d’une amie", d:"Te laisser consoler par une voix bienveillante.", ex:"j7"},
+    {t:"Un détail beau", d:"Ta sensibilité capte aussi la beauté.", ex:"j2", defi:"Dix minutes dehors, le regard au loin."},
+    {t:"Trois petites choses", d:"Remarquer ce qui va, même minuscule.", ex:"j6"}]},
+  cultiver:{i:"☀️", name:"Cultiver le soleil", intro:"Ça va plutôt bien. C’est le meilleur moment pour s’entraîner et faire des réserves pour les jours gris.", steps:[
+    {t:"Trois petites choses", d:"Ancrer ce qui va bien.", ex:"j6"},
+    {t:"Un détail beau", d:"Savourer avec ta sensibilité.", ex:"j2", defi:"Savourer un bon moment vingt secondes de plus que d’habitude."},
+    {t:"Ton kit doux", d:"Noter ce qui te recharge pendant que tu t’en souviens bien.", ex:"kit"},
+    {t:"Soupir cyclique", d:"S’entraîner quand ça va rend l’exercice plus efficace quand ça ne va pas.", ex:"soupir"},
+    {t:"Une limite", d:"Protéger ce qui va bien.", ex:"j4"},
+    {t:"La pause d’autocompassion", d:"S’entraîner à froid, pour l’avoir sous la main.", ex:"selfcomp"},
+    {t:"Une lettre pour les jours gris", d:"Écris à la toi des jours difficiles : ce qui l’aide, ce que tu sais d’elle.", ex:"j3"}]}
+};
+
+function weekCheckins(){ const out = []; for (let i = 0; i < 7; i++){ const d = new Date(); d.setDate(d.getDate() - i); const c = lastCheckin(dayKey(d)); if (c) out.push({i, c}); } return out; }
+const isHard = c => ["orage","pluie","brume"].includes(c.weather) || (c.energy && c.energy <= 2);
+const POS = ["calme","apaisée","joyeuse","reconnaissante","émue","tendre","fière","soulagée","curieuse","corps détendu"];
+function suggestedTheme(){
+  const sc = {recharge:0, apaiser:0, demeler:0, douceur:0, cultiver:0}, has = (a, w) => w.filter(x => a.includes(x)).length;
+  weekCheckins().forEach(({i, c}) => {
+    const w = 1 / (1 + .35 * i);
+    sc.recharge += w * ((c.energy && c.energy <= 2 ? 2 : 0) + 1.5 * has(c.emo, ["vidée","fatiguée","saturée"]) + (c.weather === "brume" ? 1 : 0) + has(c.body, ["tête lourde","jambes lourdes"]));
+    sc.apaiser  += w * ((c.weather === "orage" ? 2 : 0) + 1.5 * has(c.emo, ["anxieuse","inquiète","submergée"]) + has(c.body, ["cœur qui s’emballe","ventre noué"]));
+    sc.demeler  += w * (1.5 * has(c.emo, ["coupable","honteuse","incomprise","frustrée","irritée","en colère","perdue"]));
+    sc.douceur  += w * ((c.weather === "pluie" ? 1.5 : 0) + 1.5 * has(c.emo, ["triste","seule","nostalgique"]) + has(c.body, ["larmes au bord des yeux"]));
+    sc.cultiver += w * ((["soleil","eclaircies"].includes(c.weather) ? 1.5 : 0) + (c.energy >= 4 ? 1 : 0) + .7 * has(c.emo, POS));
+  });
+  const best = Object.entries(sc).sort((a, b) => b[1] - a[1])[0];
+  return best[1] > 0 ? best[0] : "apaiser";
+}
+const newPath = th => ({theme:th, start:Date.now(), done:Array(7).fill(false)});
+const stepIndex = () => S.path ? S.path.done.indexOf(false) : -1;
+function ensurePath(){
+  if (!S.path){ S.path = newPath(suggestedTheme()); save(); return "new"; }
+  return null;
+}
+
+function trends(){
+  const days = weekCheckins(), out = [];
+  if (days.length < 2) return out;
+  const hard = days.filter(x => isHard(x.c)).length, recent = days.slice(0, 3);
+  if (days.length >= 5 && hard >= 5) out.push({k:"alert", t:`${hard} de tes ${days.length} derniers jours notés ont été lourds. Ce n’est pas un échec, c’est une information importante. Ça vaut le coup d’en parler à quelqu’un de confiance, ou à ton médecin : tu n’as pas à porter ça seule.`});
+  else if (recent.length === 3 && recent[2].i <= 3 && recent.every(x => isHard(x.c))) out.push({k:"hard", t:"Trois jours difficiles d’affilée. Ton seau a besoin d’une vraie vidange : prévois un moment de récupération sans aucune obligation, et dis à un proche que c’est une période chargée."});
+  const en = days.filter(x => x.c.energy).map(x => x.c.energy), avg = a => a.reduce((s, x) => s + x, 0) / a.length;
+  if (en.length >= 4){
+    const now = avg(en.slice(0, 2)), before = avg(en.slice(2));
+    if (before - now >= 1.2) out.push({k:"down", t:"Ton énergie baisse depuis quelques jours. Regarde ce qui t’a vidée récemment : y a-t-il une chose à alléger cette semaine ?"});
+    else if (now - before >= 1.2) out.push({k:"up", t:"Ton énergie remonte ces derniers jours. Qu’est-ce qui a aidé ? Note-le : c’est précieux pour les jours gris."});
+  }
+  const count = {};
+  days.forEach(x => [...x.c.emo, ...x.c.body].forEach(e => count[e] = (count[e] || 0) + 1));
+  const rec = Object.entries(count).filter(([, n]) => n >= 3).sort((a, b) => b[1] - a[1]);
+  const neg = rec.filter(([e]) => !POS.includes(e)).slice(0, 2).map(([e]) => `« ${e} »`);
+  const pos = rec.filter(([e]) => POS.includes(e)).slice(0, 2).map(([e]) => `« ${e} »`);
+  if (neg.length) out.push({k:"rec", t:`${neg.join(" et ")} ${neg.length > 1 ? "reviennent" : "revient"} souvent cette semaine. Ce n’est pas anodin : ton parcours en tient compte.`});
+  if (pos.length) out.push({k:"up", t:`${pos.join(" et ")} ${pos.length > 1 ? "reviennent" : "revient"} souvent cette semaine. Qu’est-ce qui ${pos.length > 1 ? "les" : "le"} nourrit ?`});
+  return out;
+}
+
+function advise(c){
+  const A = [], X = {}, has = (a, ...w) => w.some(x => a.includes(x)), addX = (k, p) => X[k] = Math.max(X[k] || 0, p);
+  const h = new Date().getHours(), night = h >= 21 || h < 6;
+  const alarm = c.weather === "orage" || has(c.emo, "submergée", "anxieuse") || c.body.includes("cœur qui s’emballe");
+  const low = (c.energy && c.energy <= 2) || has(c.emo, "vidée", "fatiguée", "saturée");
+  if (alarm){ A.push({p:10, t:"Ton système d’alarme est allumé. D’abord le corps, ensuite les pensées : allonger l’expiration envoie au cerveau le signal que le danger est passé."}); addX(night ? "longue" : "soupir", 10); addX("ground", 8); }
+  if (low){ A.push({p:9, t:"Ton seau est plein. Ce n’est pas le moment d’en rajouter : retire une chose de ta journée, même petite. Ce n’est pas de la paresse, c’est de l’entretien."}); addX("aid", 9); addX(night ? "longue" : "pmr", 6); }
+  if (has(c.emo, "coupable", "honteuse")){ A.push({p:8, t:"La honte et la culpabilité grossissent dans le silence et rétrécissent avec la bienveillance. Parle-toi comme tu parlerais à une amie qui aurait fait la même chose."}); addX("selfcomp", 8); addX("j7", 6); }
+  if (has(c.emo, "inquiète", "anxieuse")){ A.push({p:7, t:"Un « et si… » tourne en boucle ? Écris-le dans la boîte à soucis : une fois noté, ton cerveau peut le lâcher un peu."}); addX("worry", 7); addX("boats", 6); }
+  if (has(c.emo, "incomprise", "frustrée", "irritée", "en colère")){ A.push({p:7, t:"Quand on se sent incomprise ou irritée, il y a souvent une interprétation au milieu, de ton côté ou du leur. Séparer les faits de l’histoire aide à y voir clair. Et la colère signale souvent une limite franchie : laquelle ?"}); addX("tr", 8); addX("j4", 5); }
+  if (has(c.emo, "triste", "seule", "nostalgique") || c.weather === "pluie"){ A.push({p:6, t:"La tristesse a besoin d’être accueillie, pas réglée. Et d’un peu de lien : un message à quelqu’un qui te fait du bien peut suffire."}); addX("heart", 7); addX("j0", 6); }
+  if (night && (alarm || low || has(c.emo, "inquiète"))) A.push({p:6.5, t:"Il est tard. Si des pensées tournent, pose-les par écrit avant de dormir : elles t’attendront demain, tu n’as pas besoin de les garder dans ta tête cette nuit."});
+  if (c.weather === "brume" || c.emo.includes("perdue")){ A.push({p:5, t:"Quand tout est flou, inutile de tout comprendre. Nomme juste ce dont tu as besoin, et fais un pas minuscule dans cette direction."}); addX("j3", 6); addX("ground", 5); }
+  const tense = c.body.filter(b => ["épaules tendues","mâchoire serrée","ventre noué","gorge serrée"].includes(b));
+  if (tense.length){ A.push({p:5, t:`Ton corps porte une partie de la charge (${tense.join(", ")}). Il peut la déposer : contracter puis relâcher l’aide à sentir la différence.`}); addX("pmr", 7); }
+  if (c.body.includes("larmes au bord des yeux")) A.push({p:4, t:"Les larmes sont une soupape, pas une faiblesse. Si tu peux, laisse-les venir dans un endroit tranquille : après, le corps redescend souvent."});
+  if (c.body.includes("tête lourde")) A.push({p:3, t:"Tête lourde : quelques minutes sans écran, le regard au loin, et un verre d’eau. Ton cerveau a beaucoup traité aujourd’hui."});
+  const good = ["soleil","eclaircies"].includes(c.weather) || has(c.emo, "joyeuse", "reconnaissante", "fière", "calme", "apaisée", "soulagée");
+  if (good && !alarm && !low){ A.push({p:4, t:"Belle météo intérieure. Les personnes sensibles ressentent aussi le positif plus fort : savoure ce moment vingt secondes de plus, et note ce qui l’a nourri."}); addX("j6", 5); addX("j2", 4); }
+  if (!A.length) A.push({p:1, t:"Merci d’avoir pris ce moment. Rien que s’arrêter pour regarder à l’intérieur, c’est déjà prendre soin de toi."});
+  if (!Object.keys(X).length){ addX("soupir", 3); addX("j6", 2); }
+  return {adv:A.sort((a, b) => b.p - a.p).slice(0, 3), ex:Object.entries(X).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0])};
+}
+
+function exRow(k, act){ const e = EX[k]; return `<button class="tool" data-act="${act}" data-v="${k}"><span class="ic">${e.i}</span><div><b>${e.t}</b><span>${e.d}</span></div><span class="chev">${ICON.chev}</span></button>`; }
+const dots7 = () => `<div class="steps" style="margin:10px 0">${S.path.done.map(d => `<i class="${d ? "on" : ""}"></i>`).join("")}</div>`;
+function pathBlock(isNew){
+  if (!S.path) return `<p class="mut small">Fais ton premier relevé : ton parcours se dessinera à partir de tes réponses.</p>`;
+  const T = THEMES[S.path.theme], i = stepIndex(), sug = suggestedTheme();
+  if (i < 0) return `<p><b>${T.i} Parcours « ${T.name} » terminé.</b> Sept étapes pour toi : sois fière.</p>${dots7()}
+    <p class="small mut">D’après tes derniers relevés, la suite pourrait être « ${THEMES[sug].name} ».</p>
+    <div class="row">${Object.keys(THEMES).map(k => `<button class="chip ${k === sug ? "on" : ""}" data-act="pathNew" data-v="${k}">${THEMES[k].i} ${THEMES[k].name}</button>`).join("")}</div>`;
+  const s = T.steps[i];
+  const old = Date.now() - S.path.start > 864e5;
+  return `${isNew ? `<p class="help">Un parcours commence, choisi d’après tes réponses. ${T.intro}</p>` : ""}
+    <p class="label">${T.i} ${T.name}, étape ${i + 1} sur 7</p>${dots7()}
+    <h3>${s.t}</h3><p class="small mut">${s.d}</p>
+    ${s.defi ? `<p class="small"><b>Le petit défi :</b> ${s.defi}</p>` : ""}
+    <div class="row"><button class="btn primary" data-act="pathGo" data-v="${i}">Commencer</button><button class="btn" data-act="pathDone" data-v="${i}">C’est fait</button></div>
+    ${(old && sug !== S.path.theme) ? `<p class="help" style="margin-top:12px">Tes derniers relevés parlent plutôt de « ${THEMES[sug].name} ». <button class="link" data-act="pathNew" data-v="${sug}">Changer de parcours</button></p>` : ""}
+    <p class="mut tiny">Une étape par jour, c’est l’idée, mais le parcours avance à ton rythme. Pas de retard possible.</p>`;
+}
+
+function showPlan(){
+  const P = cur.plan; if (!P) return closeOv();
+  cur.then = null;
+  const c = P.c, tags = [W[c.weather].e + " " + W[c.weather].n];
+  if (c.energy) tags.push("énergie " + ["vide","basse","moyenne","bonne","pleine"][c.energy - 1]);
+  tags.push(...c.emo, ...c.body);
+  openOv(`${head()}<div class="ov-body">
+    <h1>Ta feuille de route</h1>
+    <div class="tags">${tags.map(t => `<i>${esc(t)}</i>`).join("")}</div>
+    <section><h2>Ce que j’en comprends</h2>${P.adv.map(a => `<p class="advice">${esc(a.t)}</p>`).join("")}</section>
+    ${(c.drain || c.fill) ? `<section><h2>Ce que tu as noté</h2>
+      ${c.drain ? `<p class="advice">Ce qui t’a vidée : « ${esc(c.drain)} ». Si ça revient souvent, peux-tu le réduire, le décaler, ou prévoir une pause juste après ?</p>` : ""}
+      ${c.fill ? `<p class="advice">Ce qui t’a remplie : « ${esc(c.fill)} ». Garde-en une part pour demain.${S.kit.includes(c.fill) ? "" : ` <button class="link" data-act="kitFromFill">Ajouter à mon kit doux</button>`}</p>` : ""}</section>` : ""}
+    <section><h2>Pour maintenant</h2><div class="tools" style="margin-top:10px">${P.ex.map(k => exRow(k, "planEx")).join("")}</div></section>
+    ${P.trends.length ? `<section><h2>Sur plusieurs jours</h2>${P.trends.map(t => `<p class="advice ${t.k}">${esc(t.t)}</p>`).join("")}
+      ${P.trends.some(t => t.k === "alert") ? `<p class="small mut">Et si des idées noires s’invitent, le <a href="tel:3114"><b>3114</b></a> répond gratuitement, jour et nuit.</p>` : ""}</section>` : ""}
+    <section class="card" id="planPath"><h2>Ton parcours</h2>${pathBlock(P.isNew)}</section>
+    <button class="btn ghost block" data-act="close">Revenir au lac</button></div>`);
+}
+function openPathAll(){
+  const T = THEMES[S.path.theme];
+  openOv(`${head()}<div class="ov-body"><h1>${T.i} ${T.name}</h1><p class="mut">${T.intro}</p>
+    <div class="card" style="padding:6px 16px">${T.steps.map((s, i) => `<div class="check ${S.path.done[i] ? "on" : ""}" style="cursor:default"><span class="box"></span><span><b>${s.t}</b><br><span class="small mut">${s.d}${s.defi ? " Petit défi : " + s.defi : ""}</span></span></div>`).join("")}</div>
+    <p class="small mut">Envie d’un autre parcours ?</p>
+    <div class="chips">${Object.keys(THEMES).filter(k => k !== S.path.theme).map(k => `<button class="chip" data-act="pathNew" data-v="${k}">${THEMES[k].i} ${THEMES[k].name}</button>`).join("")}</div></div>`);
 }
 
 /* ---------- SOS ---------- */
@@ -841,8 +1033,13 @@ function openCheckin(w){
 function ciSave(){
   const c = cur.ci;
   if (!c.weather){ toast("Choisis d’abord la météo du moment"); return; }
-  S.checkins.unshift({id:uid(), ts:Date.now(), weather:c.weather, energy:c.energy ? +c.energy : null, emo:c.emo, body:c.body, drain:$("#ciDrain").value.trim(), fill:$("#ciFill").value.trim()});
-  addStone(); route = "meteo"; closeOv(); go("meteo");
+  const entry = {id:uid(), ts:Date.now(), weather:c.weather, energy:c.energy ? +c.energy : null, emo:c.emo.slice(), body:c.body.slice(), drain:$("#ciDrain").value.trim(), fill:$("#ciFill").value.trim()};
+  S.checkins.unshift(entry);
+  const isNew = ensurePath() === "new", r = advise(entry);
+  cur.plan = {c:entry, adv:r.adv, ex:r.ex, trends:trends(), isNew};
+  cur.pathStep = null; addStone();
+  route = "meteo"; render();
+  showPlan();
 }
 
 /* ---------- carnet ---------- */
@@ -1102,6 +1299,13 @@ const ACT = {
   perm: t => { const v = t.dataset.v, l = S.perms.list, i = l.indexOf(v); if (i >= 0) l.splice(i, 1); else l.push(v); t.classList.toggle("on", i < 0); save(); },
   kitAdd: () => { const i = $("#kitIn"), v = i.value.trim(); if (!v) return; S.kit.push(v); save(); render(); },
   kitDel: t => { S.kit.splice(+t.dataset.v, 1); save(); render(); },
+  planEx: t => { cur.then = null; EX[t.dataset.v].run({then:showPlan}); },
+  planLast: () => { const c = S.checkins[0]; const r = advise(c); cur.plan = {c, adv:r.adv, ex:r.ex, trends:trends(), isNew:false}; showPlan(); },
+  pathGo: t => { const i = +t.dataset.v, st = THEMES[S.path.theme].steps[i]; cur.then = null; const fromPlan = ov.classList.contains("show"); cur.pathStep = i; EX[st.ex].run(fromPlan ? {then:showPlan} : {}); },
+  pathDone: t => { const i = +t.dataset.v; if (!S.path.done[i]){ cur.pathStep = i; addStone(); } if (ov.classList.contains("show") && cur.plan) showPlan(); else render(); },
+  pathNew: t => { S.path = newPath(t.dataset.v); save(); toast("Nouveau parcours : " + THEMES[t.dataset.v].name); if (ov.classList.contains("show") && cur.plan && $("#planPath")) showPlan(); else closeOv(); },
+  pathAll: () => openPathAll(),
+  kitFromFill: t => { const f = cur.plan?.c.fill; if (f && !S.kit.includes(f)){ S.kit.push(f); save(); } t.remove(); toast("Ajouté à ton kit doux"); },
   settings: () => openSettings(),
   setTheme: t => { S.theme = t.dataset.v; save(); applyTheme(); $$("[data-act=setTheme]").forEach(b => b.classList.toggle("on", b === t)); },
   setToggle: t => { const k = t.dataset.v; S[k] = !S[k]; save(); t.setAttribute("aria-pressed", S[k]); applyTheme(); if (k === "sound" && S.sound){ audioUnlock(); tone(440, 1.2); } },
